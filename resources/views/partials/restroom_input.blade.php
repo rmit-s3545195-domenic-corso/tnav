@@ -18,4 +18,4 @@
     <label for="rr_floor">Floor</label>
     <input type="text" name="rr_floor" class="form-control" id="rr_floor" />
 </div>
-<button class="btn btn-success" type="submit">Save Changes</button>
+<button type="submit" class="btn btn-info">Save Changes</button>

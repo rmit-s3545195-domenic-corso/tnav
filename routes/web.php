@@ -14,3 +14,5 @@
 Route::get('/', function () {
     return ('interactive map view here');
 });
+
+Route::get('/admin_login', 'AdminController@index');
