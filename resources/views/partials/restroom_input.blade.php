@@ -15,7 +15,7 @@
     <input type="text" name="rr_lng" class="form-control" id="rr_lng" disabled />
 </div>
 <div class="form-group">
-    <label for="rr_floor">Floor<label>
+    <label for="rr_floor">Floor</label>
     <input type="text" name="rr_floor" class="form-control" id="rr_floor" />
 </div>
-<button type="submit">Save Changes</button>
+<button class="btn btn-success" type="submit">Save Changes</button>
