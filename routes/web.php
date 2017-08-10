@@ -16,3 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/admin_login', 'AdminController@index');
+
+Route::get('/add', function () {
+    return view('add_restroom');
+});

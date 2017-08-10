@@ -12,6 +12,35 @@ html, body {
     height: 5%;
     background: #EEE;
     border-bottom: 1px solid #CCC;
+    overflow: hidden;
+}
+
+#header > div {
+    height: 100%;
+    float: left;
+}
+
+#header_left {
+    width: 15%;
+    background-color: #111;
+}
+
+#header_middle {
+    width: 70%;
+    background-color: #333;
+    text-align: center; /* to center the logo */
+}
+
+#logo {
+    height: 100%;
+    background-color: #FFF;
+    display: inline-block;
+    padding: 10px;
+}
+
+#header_right {
+    width: 15%;
+    background-color: #555;
 }
 
 #content {

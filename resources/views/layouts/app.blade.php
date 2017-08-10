@@ -9,7 +9,16 @@
         @yield('styles') 
     </head>
     <body>
-        <div id="header"></div>
+        <div id="header">
+            <div id="header_left">
+
+            </div>
+            <div id="header_middle">
+                <img id="logo" alt="TNav" />
+            </div>
+            <div id="header_right">
+            </div>
+        </div>
         <div id="content">
             @yield('content')
         </div>
