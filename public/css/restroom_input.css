@@ -1,0 +1,18 @@
+.restroom_input .form-group {
+    margin: 30px 0;
+}
+
+.restroom_input label {
+    font-size: 110%;
+    margin-bottom: 10px;
+}
+
+.restroom_input input {
+    height: 40px;
+    font-size: 125%;
+}
+
+.restroom_input button {
+    font-size: 125%;
+    text-transform: capitalize;
+}
