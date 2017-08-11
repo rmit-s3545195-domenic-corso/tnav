@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -10,5 +10,10 @@ class AdminController extends Controller
     public function index()
     {
         return view('admin_login');
+    }
+
+    public function edit_restroom()
+    {
+        return view('edit_restroom');
     }
 }
