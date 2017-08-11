@@ -16,3 +16,7 @@
     font-size: 125%;
     text-transform: capitalize;
 }
+
+#ri_map {
+    height: 300px;
+}

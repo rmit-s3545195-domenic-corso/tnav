@@ -70,8 +70,16 @@ h1 { margin: 50px 0; }
     width: 600px;
 }
 
+/* On mobile,
+    - container width fills the screen
+    - h1 tags are centered
+*/
 @media screen and (max-width: 600px) {
     .container {
         width: 100%;
+    }
+
+    h1 {
+        text-align: center;
     }
 }

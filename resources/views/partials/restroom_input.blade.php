@@ -8,13 +8,11 @@
         <input type="text" name="rr_desc" class="form-control" id="rr_desc" />
     </div>
     <div class="form-group">
-        <label for="rr_lat">Latitude</label>
-        <input type="text" name="rr_lat" class="form-control" id="rr_desc" disabled />
+        <label>Location</label>
+        <div id="ri_map"></div>
     </div>
-    <div class="form-group">
-        <label for="rr_lng">Longitude</label>
-        <input type="text" name="rr_lng" class="form-control" id="rr_lng" disabled />
-    </div>
+    <input type="text" name="rr_lat" class="form-control" id="rr_desc" style="display: none" disabled />
+    <input type="text" name="rr_lng" class="form-control" id="rr_lng" style="display: none" disabled />
     <div class="form-group">
         <label for="rr_floor">Floor</label>
         <input type="text" name="rr_floor" class="form-control" id="rr_floor" />
