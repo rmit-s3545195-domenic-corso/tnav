@@ -12,3 +12,7 @@
         @include('partials.restroom_input')
     </div>
 @endsection
+
+@section('scripts')
+    <script src="{{ url('/js/restroom_input.js') }}"></script>
+@endsection
