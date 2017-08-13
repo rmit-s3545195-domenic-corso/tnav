@@ -9,7 +9,10 @@
 @section('content')
     <div class="container">
         <h1>Add Restroom</h1>
-        @include('partials.restroom_input')
+        <form action="{{ url('/add') }}" method="post">
+            @include('partials.restroom_input')
+            {{ csrf_field() }}
+        </form>
     </div>
 @endsection
 

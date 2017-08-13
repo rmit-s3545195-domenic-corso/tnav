@@ -21,4 +21,6 @@ Route::get('/add', function () {
     return view('add_restroom');
 });
 
+Route::post('/add', 'RestroomController@add');
+
 Route::get('/edit', 'AdminController@edit_restroom');
