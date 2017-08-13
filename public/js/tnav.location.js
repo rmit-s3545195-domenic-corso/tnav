@@ -1,10 +1,6 @@
-let geoloc = navigator.geolocation;
+let tnav.location {};
 
-tnav.location.getPosition = geloc.getCurrentPosition(success, failure); {
-
-/* Gets co-ordinates */
-      var coords = {
-        lat: position.coords.latitude,
-        long: position.coords.longitude
-    };
-}
+tnav.location.getPosition = function(success, failure) {
+    /*get's location, success and failure commands determined by external code*/
+    navigator.geolocation.getCurrentPosition(success,failure);
+};
