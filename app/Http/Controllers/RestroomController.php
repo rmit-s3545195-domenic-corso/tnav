@@ -25,7 +25,7 @@ class RestroomController extends Controller
         $restroom->name = $request->rr_name;
         $restroom->description = $request->rr_desc;
         $restroom->lat = $request->rr_lat;
-        $restroom->lng = $request->rr_floor;
+        $restroom->lng = $request->rr_lng;
         $restroom->addedBy = $request->rr_added_by;
         $restroom->reports = 0;
         $restroom->save();
