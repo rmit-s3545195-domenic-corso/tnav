@@ -1,5 +1,7 @@
 <?php
 
+use App\Restroom;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,5 +24,9 @@ Route::get('/add', function () {
 });
 
 Route::post('/add', 'RestroomController@add');
+
+Route::get('restroom_list', function() {
+    return view('restroom_list', ['restrooms' => Restroom::all()]);
+});
 
 Route::get('/edit', 'AdminController@edit_restroom');

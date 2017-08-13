@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Restroom extends Model
 {
     public static function getValidationRules() : array {
-        $wordRegex = '/^[\w ]+$/';
+        $wordRegex = '/^[\w \'\.]+$/';
         $latLngRegex = '/^-?\d+\.\d+$/';
 
         return [

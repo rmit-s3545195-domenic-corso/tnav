@@ -9,6 +9,17 @@
 @section('content')
     <div class="container">
         <h1>Add Restroom</h1>
+
+        <!-- If there are form errors, show these here -->
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </div>
+        @endif
+
+        <!-- Display 'Add Restroom' form -->
         <form action="{{ url('/add') }}" method="post">
             @include('partials.restroom_input')
             {{ csrf_field() }}
