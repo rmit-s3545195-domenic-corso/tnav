@@ -1,25 +1,64 @@
 let RestroomInput = {
     map: null,
+    marker: null,
+    latInp: document.getElementById("rr_lat"),
+    lngInp: document.getElementById("rr_lng"),
     /* list of elements */
     e: {
         map: document.getElementById("ri_map")
     },
-    /* a zoom of 20 is close enough to see the streets clearly */
-    STARTING_ZOOM: 20
+    /* a zoom of 15 is close enough to see the streets clearly */
+    STARTING_ZOOM: 18
+};
+
+/* always use bind(RestroomInput) when using these */
+RestroomInput.evtCallbacks = {
+    updateLatLngInput: function() {
+        let centerPos = this.map.getCenter();
+
+        /* move the marker to the center of map */
+        this.marker.setPosition(centerPos);
+
+        this.latInp.value = centerPos.lat();
+        this.lngInp.value = centerPos.lng();
+    },
+    useLocBtnClicked: function() {
+        /* call tnav.location.getCurrentPosition here */
+    }
 };
 
 RestroomInput.init = function(startingLocation) {
-    /* load the map */
-    this.map = new google.maps.Map(this.e.map, {
+    /* map options */
+    let mapOptions = {
         zoom: this.STARTING_ZOOM,
-        center: startingLocation
-    })
+        maxZoom: this.STARTING_ZOOM,
+        minZoom: this.STARTING_ZOOM,
+        center: startingLocation,
+        streetViewControl: false,
+        scaleControl: false,
+        rotateControl: false,
+        zoomControl: false,
+        scrollwheel: false,
+        clickableIcons: false
+    };
+
+    /* load the map */
+    this.map = new google.maps.Map(this.e.map, mapOptions);
 
     /* set a marker in the center position */
-    new google.maps.Marker({
+    this.marker = new google.maps.Marker({
         position: startingLocation,
         map: this.map
     });
+
+    /* add relevant event listeners */
+    this.addListeners();
+};
+
+RestroomInput.addListeners = function() {
+    /* when the center position of the map is changed */
+    this.map.addListener("center_changed", 
+        this.evtCallbacks.updateLatLngInput.bind(this));
 };
 
 /* object literal to be replaced by actual user location */
