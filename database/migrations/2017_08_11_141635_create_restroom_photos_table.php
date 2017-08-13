@@ -13,13 +13,13 @@ class CreateRestroomPhotosTable extends Migration
      */
     public function up()
     {
-        Schema::create('RestroomPhotos', function (Blueprint $table) {
+        Schema::create('restroom_photos', function (Blueprint $table) {
             $table->increments('id');
-	    $table->string('name');
-	    $table->string('addedBy');
-	    $table->string('path');
-	    $table->integer('reports');
-	    $table->integer('restroomID');
+            $table->string('name');
+            $table->string('addedBy');
+            $table->string('path');
+            $table->integer('reports');
+            $table->integer('restroomID');
             $table->timestamps();
         });
     }

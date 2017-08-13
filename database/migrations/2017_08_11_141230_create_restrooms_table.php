@@ -15,13 +15,13 @@ class CreateRestroomsTable extends Migration
     {
         Schema::create('restrooms', function (Blueprint $table) {
             $table->increments('id');
-	    $table->string('name');
-	    $table->string('description');
-	    $table->string('lat');
-	    $table->string('lng');
-	    $table->string('floor');
-	    $table->string('addedBy');
-	    $table->integer('reports');
+            $table->string('name');
+            $table->string('description');
+            $table->string('lat');
+            $table->string('lng');
+            $table->string('floor');
+            $table->string('addedBy');
+            $table->integer('reports');
             $table->timestamps();
         });
     }
