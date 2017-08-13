@@ -51,14 +51,26 @@ RestroomInput.init = function(startingLocation) {
         map: this.map
     });
 
-    /* add relevant event listeners */
     this.addListeners();
+    this.checkForOldLatLng();
 };
 
 RestroomInput.addListeners = function() {
     /* when the center position of the map is changed */
     this.map.addListener("center_changed", 
         this.evtCallbacks.updateLatLngInput.bind(this));
+};
+
+/* if the user has been redirected back to the page and
+is provided with lat/lng data as part of the <input> field,
+move the map to that position immediately */
+RestroomInput.checkForOldLatLng = function() {
+    if (this.latInp.value && this.lngInp.value) {
+        this.map.setCenter({
+            lat: parseFloat(this.latInp.value),
+            lng: parseFloat(this.lngInp.value)
+        });
+    }
 };
 
 /* object literal to be replaced by actual user location */
