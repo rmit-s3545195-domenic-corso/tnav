@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Validator;
+use App\Restroom;
 
 class AdminController extends Controller
 {
@@ -12,8 +13,10 @@ class AdminController extends Controller
         return view('admin_login');
     }
 
-    public function edit_restroom()
+    public function edit_restroom(Request $request)
     {
-        return view('edit_restroom');
+        $restroom = Restroom::find($request->id);
+
+        return view('edit_restroom')->with('restroom', $restroom);
     }
 }

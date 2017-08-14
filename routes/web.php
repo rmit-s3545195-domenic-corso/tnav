@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/admin_login', 'AdminController@index');
 
 Route::get('/add', function () {
-    return view('add_restroom');
+    return view('add_restroom', ['restroom' => new Restroom()]);
 });
 
 Route::post('/add', 'RestroomController@add');
@@ -29,4 +29,6 @@ Route::get('restroom_list', function() {
     return view('restroom_list', ['restrooms' => Restroom::all()]);
 });
 
-Route::get('/edit', 'AdminController@edit_restroom');
+Route::get('/edit/{id}', 'AdminController@edit_restroom')->name('edit');
+
+Route::post('/edit/{id}', 'RestroomController@edit');
