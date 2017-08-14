@@ -30,6 +30,7 @@ class RestroomController extends Controller
 
     public function edit(Request $request)
     {
+      /* Searches for a restroom based on the id passed through the request */
       $restroom = Restroom::find($request->id);
 
       $validator = Validator::make($request->all(), Restroom::getValidationRules());
@@ -47,6 +48,7 @@ class RestroomController extends Controller
 
     }
 
+    /* function to update restroom properties, takes in a request and restroom object */
     public static function updateRestroomFromRequest(Request $request, Restroom $restroom) : Restroom
     {
       $restroom->name = $request->rr_name;
