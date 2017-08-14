@@ -30,6 +30,7 @@
         <div id="content">
             @yield('content')
         </div>
+        <script src="{{ url('/js/tnav.js') }}"></script>
         @yield('scripts')
     </body>
 </html>

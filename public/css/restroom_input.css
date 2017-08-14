@@ -19,6 +19,7 @@
 
 #ri_map {
     height: 300px;
+    border: 1px solid #CCC;
 }
 
 #ri_use_loc_btn {
