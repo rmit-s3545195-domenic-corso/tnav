@@ -5,9 +5,10 @@ let RestroomInput = {
     lngInp: document.getElementById("rr_lng"),
     /* list of elements */
     e: {
-        map: document.getElementById("ri_map")
+        map: document.getElementById("ri_map"),
+        useLocBtn: document.getElementById("ri_use_loc_btn")
     },
-    /* a zoom of 15 is close enough to see the streets clearly */
+    /* a zoom of 18 is close enough to see the streets clearly */
     STARTING_ZOOM: 18
 };
 
@@ -23,7 +24,27 @@ RestroomInput.evtCallbacks = {
         this.lngInp.value = centerPos.lng();
     },
     useLocBtnClicked: function() {
-        /* call tnav.location.getCurrentPosition here */
+
+        let success = function(geoPos) {
+            /* grab lat/lng data from the Geoposition object
+            returned from browser */
+            let lat = geoPos.coords.latitude;
+            let lng = geoPos.coords.longitude;
+
+            /* move the center position of the map to match the
+            lat/lng values returned from browser */
+            this.map.setCenter({
+                lat: lat,
+                lng: lng
+            });
+        };
+
+        let failure = function() {
+            alert("A request for your location has failed");
+        };
+
+        tnav.location.getPosition(success.bind(this), 
+            failure.bind(this));
     }
 };
 
@@ -59,6 +80,9 @@ RestroomInput.addListeners = function() {
     /* when the center position of the map is changed */
     this.map.addListener("center_changed", 
         this.evtCallbacks.updateLatLngInput.bind(this));
+
+    this.e.useLocBtn.addEventListener("click", 
+        this.evtCallbacks.useLocBtnClicked.bind(this));
 };
 
 /* if the user has been redirected back to the page and
