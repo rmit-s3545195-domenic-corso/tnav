@@ -11,6 +11,7 @@
         <div id="rr_info" class="col">Rest room info</div>
         <!-- Displays map with current location -->
         <div id="map" class="col"></div>
+        </div>
 @endsection
 
 @section('scripts')
