@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid;
+    border-radius: 1em;
+}
+
+.col {
+    width: 100%;
+    float: left;
+    padding: 5px;
+}
+
+#rr_info {
+    background: lightgrey;
+    height: 300px;
+    width: 40%;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 1em;
+}
+
+#map {
+    background: cyan;
+    height: 300px;
+    width: 100%;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 1em;
+}
+
+@media screen and (max-width: 500px) {
+    .container {
+        flex-direction: column-reverse;
+        justify-content: flex-end;
+    }
+    #rr_info, #map {
+      width: auto;
+    }
+}
