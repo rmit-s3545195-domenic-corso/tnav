@@ -14,7 +14,7 @@ use App\Restroom;
 */
 
 Route::get('/', function () {
-    return ('interactive map view here');
+    return view('current_location');
 });
 
 Route::get('/admin_login', 'AdminController@index');
@@ -32,3 +32,5 @@ Route::get('restroom_list', function() {
 Route::get('/edit/{id}', 'AdminController@edit_restroom')->name('edit');
 
 Route::post('/edit/{id}', 'RestroomController@edit');
+
+Route::get('/delete','AdminController@delete_restroom');

@@ -43,7 +43,7 @@ RestroomInput.evtCallbacks = {
             alert("A request for your location has failed");
         };
 
-        tnav.location.getPosition(success.bind(this), 
+        tnav.location.getPosition(success.bind(this),
             failure.bind(this));
     }
 };
@@ -78,10 +78,10 @@ RestroomInput.init = function(startingLocation) {
 
 RestroomInput.addListeners = function() {
     /* when the center position of the map is changed */
-    this.map.addListener("center_changed", 
+    this.map.addListener("center_changed",
         this.evtCallbacks.updateLatLngInput.bind(this));
 
-    this.e.useLocBtn.addEventListener("click", 
+    this.e.useLocBtn.addEventListener("click",
         this.evtCallbacks.useLocBtnClicked.bind(this));
 };
 
