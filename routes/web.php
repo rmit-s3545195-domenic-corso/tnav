@@ -14,7 +14,7 @@ use App\Restroom;
 */
 
 Route::get('/', function () {
-    return view('current_location');
+    return view('interactive_map');
 });
 
 Route::get('/admin_login', 'AdminController@index');
