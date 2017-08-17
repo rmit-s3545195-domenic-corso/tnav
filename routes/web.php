@@ -32,3 +32,5 @@ Route::get('restroom_list', function() {
 Route::get('/edit/{id}', 'AdminController@edit_restroom')->name('edit');
 
 Route::post('/edit/{id}', 'RestroomController@edit');
+
+Route::get('/delete','AdminController@delete_restroom');
