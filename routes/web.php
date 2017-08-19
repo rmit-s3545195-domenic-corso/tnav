@@ -13,6 +13,12 @@ use App\Restroom;
 |
 */
 
+/* Google Maps API Forward */
+Route::get('/gapi', function () {
+    $apiKey = env('MAPS_API_KEY');
+    return file_get_contents("https://maps.googleapis.com/maps/api/js?key=$apiKey");
+});
+
 Route::get('/', function () {
     return view('interactive_map');
 });
