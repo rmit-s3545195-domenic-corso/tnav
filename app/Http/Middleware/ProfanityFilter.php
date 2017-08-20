@@ -32,5 +32,3 @@ class ProfanityFilter
         return $next($request);
     }
 }
-
- ?>
