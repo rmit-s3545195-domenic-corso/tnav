@@ -22,7 +22,7 @@ class ProfanityFilter
         {
             if ($value)
             {
-            $profanitylist = file('/var/www/html/tnav/storage/app/public/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
+            $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
             $replaceProfanity = "****";
 
             $fixedprofanity = str_ireplace($profanitylist, $replaceProfanity, $value);
