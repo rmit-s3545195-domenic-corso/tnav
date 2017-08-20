@@ -22,9 +22,9 @@ class ProfanityFilter
 
         foreach($input as $value)
         {
-            if(in_array($value, $profanitylist)
+            if(in_array($value, $profanitylist))
             {
-            $fixedprofanity = str_ireplace($value, $replaceProfanity, $value);
+            $fixedprofanity = str_ireplace($profanitylist, $replaceProfanity, $value);
             return $fixedprofanity;
             }
         }
