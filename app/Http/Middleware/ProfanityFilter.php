@@ -17,14 +17,13 @@ class ProfanityFilter
     public function handle($request, Closure $next)
     {
         $input = $request->all();
+        $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
+        $replaceProfanity = "****";
 
         foreach ($input as $value)
         {
-            if ($value)
+            if (in_array($value, $profanitylist)
             {
-            $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
-            $replaceProfanity = "****";
-
             $fixedprofanity = str_ireplace($profanitylist, $replaceProfanity, $value);
             return $fixedprofanity;
             }
