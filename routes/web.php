@@ -19,18 +19,6 @@ Route::get('/gapi', function () {
     return file_get_contents("https://maps.googleapis.com/maps/api/js?key=$apiKey");
 });
 
-Route::get('hashe', function() {
-	$salt = "domenic";
-	$hashRuns = 12000000;
-
-	$hashed = "lu";
-	for ($i = 0; $i < $hashRuns; $i++) {
-		$hashed = hash("sha256", $hashed.$salt);
-	}
-
-	return $hashed;
-});
-
 Route::get('/', function () {
     return view('interactive_map');
 });
