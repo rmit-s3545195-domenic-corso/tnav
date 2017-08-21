@@ -12,11 +12,18 @@
 
 @section('content')
     <div class="container">
-        <h1>Admin Login</h1>
-        <div class="form-group">
-            <label for="admin_username">Username</label>
-            <input type="text" name="admin_username" class="form-control" id="admin_username">
+    @if (Session::has('Authorised'))
+        <div class="alert alert-success">
+            <strong>Authorised: </strong> {{ Session::get('Authorised')}}
         </div>
+    @elseif (Session::has('Unauthorised') || Session::has('Blank'))
+        <div class="alert alert-danger">
+            <strong>Unauthorised: </strong> {{ Session::get('Unauthorised')}} 
+        </div>
+    @endif
+        <h1>Admin Login</h1>
+        <form action="admin" method="POST">
+        {{ csrf_field() }}
         <div class="form-group">
             <label for="admin_password">Password</label>
             <input type="text" name="admin_password" class="form-control" id="admin_password">
@@ -24,5 +31,6 @@
         <div class="form-group">
             <button type="submit" class="btn btn-info">Login</button>
         </div>
+        </form>
     </div>
 @endsection

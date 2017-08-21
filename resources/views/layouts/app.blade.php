@@ -19,6 +19,11 @@
                 </a>
             </div>
             <div id="header_right">
+                @if(Session::has('Admin'))
+                    <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+                @endif
                 <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
                     <span class="glyphicon glyphicon-plus"></span>
                 </a>
