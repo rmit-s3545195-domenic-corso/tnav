@@ -12,18 +12,21 @@
     </head>
     <body>
         <div id="header">
-            <div id="header_left">
-
-            </div>
+            <div id="header_left"></div>
             <div id="header_middle">
                 <a href="{{ url('/') }}">
                     <img id="logo" alt="TNav" />
                 </a>
             </div>
             <div id="header_right">
-                <a class="btn btn-info" href="{{ url('/add') }}">
+                <a class="btn btn-success" href="{{ url('/add') }}">
                     <span class="glyphicon glyphicon-plus"></span>
-                    Add Restroom
+                </a>
+                <a class="btn btn-info" href="{{ url('/') }}">
+                    <span class="glyphicon glyphicon-home"></span>
+                </a>
+                <a class="btn btn-danger" href="{{ url('/admin-login') }}">
+                    <span class="glyphicon glyphicon-lock"></span>
                 </a>
             </div>
         </div>

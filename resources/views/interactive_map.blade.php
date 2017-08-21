@@ -9,12 +9,13 @@
 @section('content')
     <div id="fs_container">
         <div id="search_cont">
-            <button class="btn btn-success" id="btn_use_loc" type="button">
+            <button class="btn btn-default" id="btn_use_loc" type="button">
                 <span class="glyphicon glyphicon-record"></span>
-                Use My Location
+                Find Near Me
             </button>
-            <input type="text" id="search_inp" />
-            <button class="btn btn-info" id="btn_search" type="button">
+            <strong>OR</strong>
+            <input type="text" id="search_inp" placeholder="Enter keywords" />
+            <button class="btn btn-default" id="btn_search" type="button">
                 Search
             </button>
         </div>
