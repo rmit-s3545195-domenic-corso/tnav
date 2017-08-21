@@ -25,19 +25,29 @@
                 <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
                     <span class="glyphicon glyphicon-plus"></span>
                 </a>
-                <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
-                    <span class="glyphicon glyphicon-minus"></span>
+
+                @if(!Session::has("admin_logged_in"))
+                <a class="btn btn-danger" href="{{ url('/admin-login') }}" title="Admin Login">
+                    <span class="glyphicon glyphicon-log-in"></span>
                 </a>
+                @endif
+
                 @if(Session::has("admin_logged_in"))
+                    <a class="btn btn-warning" href="{{ url('/search') }}" title="Delete Restroom">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </a>
+
                     <a class="btn btn-danger" href="{{ url('/admin-logout') }}" title="Admin Logout">
                         <span class="glyphicon glyphicon-log-out"></span>
                     </a>
+
                 @endif
             </div>
         </div>
         <div id="content">
             @yield('content')
         </div>
+        <script src="{{ url('/js/lib/BL.js') }}"></script>
         <script src="{{ url('/js/tnav.js') }}"></script>
         @yield('scripts')
     </body>

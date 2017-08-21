@@ -33,7 +33,11 @@ Route::get('/add', function () {
     return view('add_restroom', ['restroom' => new Restroom()]);
 });
 
+Route::get('/search-query', 'RestroomController@search');
+
 Route::post('/add', 'RestroomController@add');
+
+Route::get('/delete/{id}', 'RestroomController@delete');
 
 Route::get('restroom_list', function() {
     return view('restroom_list', ['restrooms' => Restroom::all()]);
@@ -43,4 +47,4 @@ Route::get('/edit/{id}', 'AdminController@edit_restroom')->name('edit');
 
 Route::post('/edit/{id}', 'RestroomController@edit');
 
-Route::get('/delete','AdminController@delete_restroom');
+Route::get('/search','AdminController@search_restrooms');

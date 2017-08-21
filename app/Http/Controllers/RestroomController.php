@@ -48,6 +48,25 @@ class RestroomController extends Controller
 
     }
 
+    public function search(Request $request)
+    {
+      $queryText = $request->q;
+
+      /* If the string is empty  */
+      if (!trim($queryText)) {
+        return "[]";
+      }
+
+      return Restroom::where('description', 'like', '%'.$queryText.'%')->
+        orWhere('name', 'like', '%'.$queryText.'%')
+        ->get()->toJson();
+    }
+
+    public function delete(Request $request) 
+    {
+       Restroom::find($request->id)->delete();
+    }
+
     /* function to update restroom properties, takes in a request and restroom object */
     public static function updateRestroomFromRequest(Request $request, Restroom $restroom) : Restroom
     {

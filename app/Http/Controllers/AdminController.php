@@ -26,9 +26,9 @@ class AdminController extends Controller
         return view('edit_restroom')->with('restroom', $restroom);
     }
 
-    public function delete_restroom(Request $request)
+    public function search_restrooms(Request $request)
     {
-        return view('delete_restroom');
+        return view('search_restrooms');
     }
 
     public function admin_login(Request $request)
