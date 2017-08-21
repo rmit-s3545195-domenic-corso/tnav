@@ -23,6 +23,12 @@
                     <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
                         <span class="glyphicon glyphicon-minus"></span>
                     </a>
+                    <form action="{{ url('/admin-logout') }}" method="POST">
+                    {{ csrf_field() }}
+                    <button type="submit" class="btn btn-danger" title="Logout">
+                        <span class="glyphicon glyphicon-user"></span>
+                    </button>
+                    </form>
                 @endif
                 <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
                     <span class="glyphicon glyphicon-plus"></span>

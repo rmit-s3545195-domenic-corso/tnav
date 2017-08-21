@@ -16,13 +16,17 @@
         <div class="alert alert-success">
             <strong>Authorised: </strong> {{ Session::get('Authorised')}}
         </div>
-    @elseif (Session::has('Unauthorised') || Session::has('Blank'))
+    @elseif (Session::has('Unauthorised'))
         <div class="alert alert-danger">
             <strong>Unauthorised: </strong> {{ Session::get('Unauthorised')}} 
         </div>
+    @elseif (Session::has('Blank'))
+        <div class="alert alert-danger">
+            <strong>Unauthorised: </strong> {{ Session::get('Blank')}} 
+        </div>
     @endif
         <h1>Admin Login</h1>
-        <form action="admin" method="POST">
+        <form action="{{ url('/admin') }}" method="POST">
         {{ csrf_field() }}
         <div class="form-group">
             <label for="admin_password">Password</label>
