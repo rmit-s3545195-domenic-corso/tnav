@@ -27,7 +27,7 @@ Route::get('/admin-login', 'AdminController@index');
 
 Route::post('/admin', 'AdminController@admin_login');
 
-Route::post('/admin-logout', 'AdminController@admin_logout');
+Route::get('/admin-logout', 'AdminController@admin_logout');
 
 Route::get('/add', function () {
     return view('add_restroom', ['restroom' => new Restroom()]);

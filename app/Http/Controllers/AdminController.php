@@ -10,8 +10,9 @@ use Session;
 class AdminController extends Controller
 {
     /* list of paths to files (i.e. salt, hashed password) */
-    const SALT_PATH = "/var/www/html/tnav/storage/app/SALT.txt"; 
-    const ADMIN_HASH_PATH = "/var/www/html/tnav/storage/app/admin_password.txt";     
+    const SALT_PATH = "/app/admin_salt"; 
+    const HASHED_PWD_PATH = "/app/admin_password";
+    const HASH_RUNS = 20000;
 
     public function index()
     {
@@ -31,16 +32,16 @@ class AdminController extends Controller
     }
 
     public function admin_login(Request $request)
-    {   
-        if(isset($request->admin_password))
-        {
-            $HASHED_PASSWORD = self::hashPassword($request->admin_password);
+    {
+        $paramPwd = $request->admin_password;
 
-            if(self::checkPassword($HASHED_PASSWORD) == true)
+        if (isset($paramPwd))
+        {
+            if (self::passwordMatches($paramPwd))
             {
                 Session::flash("Authorised", "Logged in as admin");
-                $request->session()->put("Admin", "Session has an admin");
-                return redirect('/admin-login');
+                $request->session()->put("admin_logged_in", true);
+                return redirect('/');
             }
 
             Session::flash("Unauthorised", "Invalid Password!");
@@ -60,44 +61,25 @@ class AdminController extends Controller
         return redirect('/');
     }
 
-    private function checkPassword(string $paramPassword) : bool
+    private function passwordMatches(string $plainTextPwd) : bool
     {
-        $ADMIN_DETAILS = file_get_contents(self::ADMIN_HASH_PATH);
-        if($ADMIN_DETAILS == $paramPassword)
-        {
-            return true;
-        } else { 
-            return false; 
-        }
+        $hashedAdminPwd = file_get_contents(storage_path(self::HASHED_PWD_PATH));
+        return ($hashedAdminPwd == self::hashPassword($plainTextPwd));
     }
 
-    private function hashPassword(string $password)
+    private function hashPassword(string $plainTextPwd)
     {
-        $hash_runs = 20000;
-        $HASHED_PASSWORD = "";
-        $SALT = file_get_contents(self::SALT_PATH);
-        for($i = 0; $i < $hash_runs; $i++)
+        $hashedPwd = $plainTextPwd;
+        $salt = file_get_contents(storage_path(self::SALT_PATH));
+
+        for ($i = 0; $i < self::HASH_RUNS; $i++)
         {
-            $HASHED_PASSWORD = hash('sha256', $password.$SALT);
-        }
-        return $HASHED_PASSWORD;
+            $hashedPwd = hash('sha256', $hashedPwd.$salt);
+        } return $hashedPwd;
     }
 
-    private function addPasswordToFile(string $passwordInput)
+    private function addPasswordToFile(string $plainTextPwd)
     {
-        $hash_runs = 20000;
-        $ADMIN_DETAILS = fopen(storage_path("/app/admin_password.txt"), "w");
-
-        $password = $passwordInput;
-
-        $hashed_txt = "";
-        $SALT = file_get_contents(self::SALT_PATH);
-        for($i = 0; $i < $hash_runs; $i++)
-        {
-            $hashed_txt = hash('sha256', $password.$SALT);
-        }
-
-        fwrite($ADMIN_DETAILS, $hashed_txt);
-        fclose($ADMIN_DETAILS); 
+        file_put_contents(storage_path(self::HASHED_PWD_PATH), self::hashPassword($plainTextPwd));
     }
 }
