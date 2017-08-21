@@ -2,8 +2,7 @@ let InteractiveMap = {
     map: null,
     marker: null,
     e: {
-        map: document.getElementById("map"),
-        infoOverlay: document.getElementById("info_overlay"),
+        map: document.getElementById("map")
     },
     STARTING_ZOOM: 16
 };
@@ -37,20 +36,6 @@ InteractiveMap.functionReturns = {
 
         tnav.location.getPosition(success.bind(this),
             failure.bind(this));
-    }
-};
-
-InteractiveMap.showInfoOverlay = function(b) {
-    switch (b) {
-        case true:
-            this.e.infoOverlay.style.animationName = "showInfoOverlay";
-            this.e.infoOverlay.style.left = "0%";
-            break;
-        case false:
-        default:
-            this.e.infoOverlay.style.animationName = "hideInfoOverlay";
-            this.e.infoOverlay.style.left = "100%";
-            break;
     }
 };
 

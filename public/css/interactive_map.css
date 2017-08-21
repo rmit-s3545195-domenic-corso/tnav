@@ -1,6 +1,4 @@
-#header {
-    margin-bottom: 0;
-}
+#header { margin-bottom: 0; }
 
 #fs_container {
     display: flex;
@@ -9,66 +7,64 @@
 
 #search_cont {
     width: 100%;
-    border-bottom: 1px solid #CCC;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     padding: 10px;
+    border-bottom: 1px solid #CCC;
 }
 
-#search_cont > * {
-    margin-right: 10px;
-}
+#search_cont > * { margin-right: 10px; }
 
-#search_inp {
+#inp_search {
     width: 35%;
     font-family: sans-serif;
     padding: 5px 10px;
 }
 
-#restroom_list, #map_info_cont {
-    width: 70%;
-    height: 95%;
+.btn_tag {
+    font-size: 90%;
+    font-weight: bold;
 }
 
-#restroom_list {
-    width: 30%;
-    border-right: 2px solid #CCC;
+#map_results_cont {
+    height: 500px;
+    display: flex;
 }
 
-#map_info_cont {
-    position: relative;
-    overflow: hidden;
-}
-
-#map_info_cont > * {
-    width: 100%;
+#map {
+    width: 60%;
     height: 100%;
 }
 
-@keyframes showInfoOverlay {
-    from {
-        left: 100%;
-    }
-    to {
-        left: 0%;
-    }
+#results {
+    width: 40%;
 }
 
-@keyframes hideInfoOverlay {
-    from {
-        left: 0%;
+@media screen and (max-width: 500px) {
+    #search_cont > * {
+        margin-bottom: 10px;
     }
-    to {
-        left: 100%;
-    }
-}
 
-#info_overlay {
-    position: absolute;
-    top: 0%;
-    left: 100%;
-    padding: 30px;
-    background-color: #FFF;
-    box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.2) inset;
-    animation-duration: 1s;
+    #btn_use_loc, #static_or_text, #inp_search, #btn_search {
+        width: 100%;
+    }
+
+    #btn_use_loc, #search_inp {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #static_or_text {
+        text-align: center;
+        font-size: 125%;
+    }
+
+    #map_results_cont {
+        flex-wrap: wrap;
+    }
+
+    #map_results_cont > * {
+        width: 100%;
+    }
 }

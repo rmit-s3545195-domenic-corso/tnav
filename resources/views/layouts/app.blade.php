@@ -19,13 +19,13 @@
                 </a>
             </div>
             <div id="header_right">
-                <a class="btn btn-success" href="{{ url('/add') }}">
+                <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
                     <span class="glyphicon glyphicon-plus"></span>
                 </a>
-                <a class="btn btn-info" href="{{ url('/') }}">
+                <a class="btn btn-info" href="{{ url('/') }}" title="Home">
                     <span class="glyphicon glyphicon-home"></span>
                 </a>
-                <a class="btn btn-danger" href="{{ url('/admin-login') }}">
+                <a class="btn btn-danger" href="{{ url('/admin-login') }}" title="Admin Login">
                     <span class="glyphicon glyphicon-lock"></span>
                 </a>
             </div>
