@@ -19,26 +19,36 @@
                 </a>
             </div>
             <div id="header_right">
-                @if(Session::has('Admin'))
-                    <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
-                        <span class="glyphicon glyphicon-minus"></span>
-                    </a>
-                    <form action="{{ url('/admin-logout') }}" method="POST">
-                    {{ csrf_field() }}
-                    <button type="submit" class="btn btn-danger" title="Logout">
-                        <span class="glyphicon glyphicon-user"></span>
-                    </button>
-                    </form>
-                @endif
-                <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </a>
                 <a class="btn btn-info" href="{{ url('/') }}" title="Home">
                     <span class="glyphicon glyphicon-home"></span>
                 </a>
+
+                @if(Session::has('Admin') == false)
+                <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </a>
+
                 <a class="btn btn-danger" href="{{ url('/admin-login') }}" title="Admin Login">
                     <span class="glyphicon glyphicon-lock"></span>
                 </a>
+
+                @elseif(Session::has('Admin'))
+                    <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+
+                    <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
+                        <span class="glyphicon glyphicon-minus"></span>
+                    </a>
+
+                    <form action="{{ url('/admin-logout') }}" method="POST">
+                        {{ csrf_field() }}
+                        <button type="submit" class="btn" style="border: none; background: #EEE;">
+                        <a class="btn btn-danger" title="Logout">
+                            <span class="glyphicon glyphicon-lock"></span>
+                        </a></button>
+                    </form>
+                @endif
             </div>
         </div>
         <div id="content">
