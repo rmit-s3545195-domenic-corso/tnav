@@ -17,26 +17,26 @@ class ProfanityFilter
     */
     public function handle($request, Closure $next) {
 
-        $rr_name = Input::get('rr_name');
-        $rr_desc = Input::get('rr_desc');
-        $rr_added_by = Input::get('rr_added_by');
-        $rr_floor = Input::get('rr_floor');
+        $rr_name = $request->input('rr_name');
+        $rr_desc = $request->input('rr_desc');
+        $rr_added_by = $request->input('rr_added_by');
+        $rr_floor = $request->input('rr_floor');
         $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
 
         if(in_array($rr_name, $profanitylist)) {
-            Input::merge(['rr_name' => "*****"]);
+            $request->merge(['rr_name' => "*****"]);
         }
 
         if(in_array($rr_desc, $profanitylist)) {
-            Input::merge(['rr_desc' => "*****"]);
+            $request->merge(['rr_desc' => "*****"]);
         }
 
         if(in_array($rr_added_by, $profanitylist)) {
-            Input::merge(['rr_added_by' => "*****"]);
+            $request->merge(['rr_added_by' => "*****"]);
         }
 
         if(in_array($rr_floor, $profanitylist)) {
-            Input::merge(['rr_floor' => "*****"]);
+            $request->merge(['rr_floor' => "*****"]);
         }
 
         return $next($request);
