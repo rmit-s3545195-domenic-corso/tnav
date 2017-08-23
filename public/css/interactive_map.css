@@ -107,6 +107,14 @@
     flex-shrink: 1;
 }
 
+.result_stars_cont > span {
+    margin-right: 5px;
+}
+
+.result_stars_cont > span:last-of-type {
+    margin-right: 0;
+}
+
 .results_tag_cont {
     height: 30px;
     padding-bottom: 7px;
