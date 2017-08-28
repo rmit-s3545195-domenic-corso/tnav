@@ -19,15 +19,20 @@
                 </a>
             </div>
             <div id="header_right">
-                <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </a>
                 <a class="btn btn-info" href="{{ url('/') }}" title="Home">
                     <span class="glyphicon glyphicon-home"></span>
                 </a>
-                <a class="btn btn-danger" href="{{ url('/admin-login') }}" title="Admin Login">
-                    <span class="glyphicon glyphicon-lock"></span>
+                <a class="btn btn-success" href="{{ url('/add') }}" title="Add Restroom">
+                    <span class="glyphicon glyphicon-plus"></span>
                 </a>
+                <a class="btn btn-danger" href="{{ url('/delete') }}" title="Delete Restroom">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </a>
+                @if(Session::has("admin_logged_in"))
+                    <a class="btn btn-danger" href="{{ url('/admin-logout') }}" title="Admin Logout">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                    </a>
+                @endif
             </div>
         </div>
         <div id="content">
