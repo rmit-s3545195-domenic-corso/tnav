@@ -11,7 +11,7 @@
         <h1>Add Restroom</h1>
         @include('partials.errors')
         <!-- Display 'Add Restroom' form -->
-        <form action="{{ url('/add') }}" method="post">
+        <form action="{{ url('/add-restroom') }}" method="post">
             @include('partials.restroom_input')
             {{ csrf_field() }}
         </form>

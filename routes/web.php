@@ -1,6 +1,9 @@
 <?php
 
+use Illuminate\Http\Request;
+
 use App\Restroom;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,38 +16,66 @@ use App\Restroom;
 |
 */
 
+/* TEMPORARY/DEVELOPMENT ROUTES */
+Route::get('restroom-list', function() {
+    return view('restroom_list', ['restrooms' => Restroom::all()]);
+});
+
+Route::get('hash-admin-pwd', function(Request $request) {
+    return AdminController::hashPassword($request->p);
+});
+
 /* Google Maps API Forward */
 Route::get('/gapi', function () {
     $apiKey = env('MAPS_API_KEY');
     return file_get_contents("https://maps.googleapis.com/maps/api/js?key=$apiKey");
 });
 
+/* Home */
 Route::get('/', function () {
     return view('interactive_map');
 });
 
-Route::get('/admin-login', 'AdminController@index');
+/* Show admin login form */
+Route::get('/admin-login', function () {
+    return view('admin_login');
+});
 
-Route::post('/admin', 'AdminController@admin_login');
+/* Process admin login attempt */
+Route::post('/admin-login', 'AdminController@login');
 
-Route::get('/admin-logout', 'AdminController@admin_logout');
-
-Route::get('/add', function () {
+/* Show 'Add Restroom' form */
+Route::get('/add-restroom', function () {
     return view('add_restroom', ['restroom' => new Restroom()]);
 });
 
-Route::get('/search-query', 'RestroomController@search');
+/* Process 'Add Restroom' attempt */
+Route::post('/add-restroom', 'RestroomController@add');
 
-Route::post('/add', 'RestroomController@add');
-
-Route::get('/delete/{id}', 'RestroomController@delete');
-
-Route::get('restroom_list', function() {
-    return view('restroom_list', ['restrooms' => Restroom::all()]);
+/* *ADMIN* Log out the admin */
+Route::get('/admin-logout', function () {
+    /* Clear the session and go back to home */
+    Session::flush();
+    Session::flash("flash_success", "Logged out.");
+    return redirect('/');
 });
 
-Route::get('/edit/{id}', 'AdminController@edit_restroom')->name('edit');
+/* *ADMIN* Show 'Search Restroom's form */
+Route::get('/admin-search', function () {
+    return view('admin_search');
+});
 
+/* *ADMIN* Query the database and return JSON result (AJAX) */
+Route::get('/search-query', 'RestroomController@search');
+
+/* *ADMIN* Delete a restroom */
+Route::get('/delete-restroom/{id}', 'RestroomController@delete');
+
+/* *ADMIN* Show 'Edit Restroom' form */
+Route::get('/edit/{id}', function (Request $request) {
+    $restroom = Restroom::find($request->id);
+    return view('edit_restroom')->with('restroom', $restroom);
+});
+
+/* *ADMIN* Process 'Edit Restroom' attempt */
 Route::post('/edit/{id}', 'RestroomController@edit');
-
-Route::get('/search','AdminController@search_restrooms');

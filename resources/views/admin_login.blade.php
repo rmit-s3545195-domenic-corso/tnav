@@ -2,39 +2,30 @@
 
 @section('title', 'Admin Login')
 
-@section('styles')
-<style type="text/css">
-    .container {
-        width: 400px;
-    }
-</style>
-@endsection
-
 @section('content')
     <div class="container">
-    @if (Session::has('Authorised'))
-        <div class="alert alert-success">
-            <strong>Authorised: </strong> {{ Session::get('Authorised')}}
-        </div>
-    @elseif (Session::has('Unauthorised'))
-        <div class="alert alert-danger">
-            <strong>Unauthorised: </strong> {{ Session::get('Unauthorised')}} 
-        </div>
-    @elseif (Session::has('Blank'))
-        <div class="alert alert-danger">
-            <strong>Unauthorised: </strong> {{ Session::get('Blank')}} 
-        </div>
-    @endif
+        <!-- Flash messages -->
+        @if (Session::has('flash_invalid_pwd'))
+            <div class="alert alert-danger">
+                <strong>{{ Session::get('flash_invalid_pwd') }}</strong>
+            </div>
+        @endif
+        @if (Session::has('flash_blank_pwd'))
+            <div class="alert alert-danger">
+                <strong>{{ Session::get('flash_blank_pwd') }}</strong>
+            </div>
+        @endif
+
         <h1>Admin Login</h1>
-        <form action="{{ url('/admin') }}" method="POST">
-        {{ csrf_field() }}
-        <div class="form-group">
-            <label for="admin_password">Password</label>
-            <input type="text" name="admin_password" class="form-control" id="admin_password">
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-info">Login</button>
-        </div>
+        <form action="{{ url('/admin-login') }}" method="post">
+            <div class="form-group">
+                <label for="admin_password">Password</label>
+                <input type="text" name="admin_password" class="form-control" id="admin_password">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-info">Login</button>
+            </div>
+            {{ csrf_field() }}
         </form>
     </div>
 @endsection

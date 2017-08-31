@@ -8,76 +8,85 @@ use App\Restroom;
 
 class RestroomController extends Controller
 {
+    /* Update Restroom attributes, accepts Request and Restroom */
+    private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
+    {
+        $restroom->name = $request->rr_name;
+        $restroom->description = $request->rr_desc;
+        $restroom->lat = $request->rr_lat;
+        $restroom->lng = $request->rr_lng;
+        $restroom->floor = $request->rr_floor;
+        $restroom->addedBy = $request->rr_added_by;
+        $restroom->reports = 0;
+
+        return $restroom;
+    }
+
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), Restroom::getValidationRules());
 
-        /* if the restroom input given by user is invalid,
-        redirect back to the 'add' page with the errors provided */
+        /* If Restroom input is not valid, redirect back to the 'add'
+        page and display the errors */
         if ($validator->fails()) {
             return redirect('/add')
                 ->withInput()
                 ->withErrors($validator);
         }
 
-        /* create a new Restroom object and then save it to the database */
-        $restroom = new Restroom();
-        self::updateRestroomFromRequest($request, $restroom);
-        $restroom->save();
+        /* Create a new Restroom */
+        $newRestroom = new Restroom();
 
-        return redirect('/restroom_list');
+        /* Assign its attributes from the request */
+        self::assignRestroomAttributesFromRequest($request, $newRestroom);
+
+        $newRestroom->save();
+
+        /* Redirect to restroom list for development, change this later on */
+        return redirect('/restroom-list');
     }
 
     public function edit(Request $request)
     {
-      /* Searches for a restroom based on the id passed through the request */
-      $restroom = Restroom::find($request->id);
+        /* Resolves a Restroom from the database given an ID */
+        $restroom = Restroom::find($request->id);
 
-      $validator = Validator::make($request->all(), Restroom::getValidationRules());
+        $validator = Validator::make($request->all(), Restroom::getValidationRules());
 
-      if($validator->fails())
-      {
-        return redirect('/edit/'.$restroom->id)->withInput()->withErrors($validator->errors());
-      }
+        /* If Restroom input is not valid, redirect back to the 'edit'
+        page and display the errors */
+        if ($validator->fails()) {
+            return redirect('/edit/' . $restroom->id)
+                ->withInput()
+                ->withErrors($validator);
+        }
 
-      /* Get the edited values and add to database */
-      self::updateRestroomFromRequest($request, $restroom);
-      $restroom->update();
+        /* Update Restroom attributes */
+        self::assignRestroomAttributesFromRequest($request, $restroom);
 
-      return redirect('/restroom_list');
+        $restroom->update();
 
+        return redirect('/restroom-list');
     }
 
-    public function search(Request $request)
-    {
-      $queryText = $request->q;
-
-      /* If the string is empty  */
-      if (!trim($queryText)) {
-        return "[]";
-      }
-
-      return Restroom::where('description', 'like', '%'.$queryText.'%')->
-        orWhere('name', 'like', '%'.$queryText.'%')
-        ->get()->toJson();
-    }
-
-    public function delete(Request $request) 
+    public function delete(Request $request)
     {
        Restroom::find($request->id)->delete();
     }
 
-    /* function to update restroom properties, takes in a request and restroom object */
-    public static function updateRestroomFromRequest(Request $request, Restroom $restroom) : Restroom
+    public function search(Request $request)
     {
-      $restroom->name = $request->rr_name;
-      $restroom->description = $request->rr_desc;
-      $restroom->lat = $request->rr_lat;
-      $restroom->lng = $request->rr_lng;
-      $restroom->floor = $request->rr_floor;
-      $restroom->addedBy = $request->rr_added_by;
-      $restroom->reports = 0;
+        $queryText = $request->q;
 
-      return $restroom;
+        /* If query is empty, return an empty JSON object  */
+        if (!trim($queryText)) {
+            return "[]";
+        }
+
+        /* Query database and return JSON formatted results */
+        return Restroom::where('description', 'like', '%'.$queryText.'%')
+            ->orWhere('name', 'like', '%'.$queryText.'%')
+            ->get()
+            ->toJson();
     }
 }

@@ -5,15 +5,15 @@
 ::-webkit-scrollbar {
     width: 12px;
 }
- 
+
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.25); 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.25);
 }
 
 html, body {
@@ -32,6 +32,13 @@ html, body {
 
 #header_left {
     width: 25%;
+}
+
+#admin_sign {
+    line-height: 60px;
+    padding-left: 20px;
+    font-size: 110%;
+    color: #555;
 }
 
 #header_middle {
@@ -81,5 +88,9 @@ html, body {
 
     h1 {
         text-align: center;
+    }
+
+    button {
+        width: 100%;
     }
 }

@@ -3,7 +3,7 @@
 @section('title', 'Edit Restroom')
 
 @section('styles')
-    <link href="{{ url('css/restroom_input.css') }}" rel="stylesheet">
+    <link href="{{ url('/css/restroom_input.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')

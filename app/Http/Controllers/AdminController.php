@@ -9,65 +9,47 @@ use Session;
 
 class AdminController extends Controller
 {
-    /* list of paths to files (i.e. salt, hashed password) */
-    const SALT_PATH = "/app/admin_salt"; 
+    /* List of paths to files relative to /storage */
+    const SALT_PATH = "/app/admin_salt";
     const HASHED_PWD_PATH = "/app/admin_password";
     const HASH_RUNS = 20000;
 
-    public function index()
+    public function login(Request $request)
     {
-        return view('admin_login');
-    }
-
-    public function edit_restroom(Request $request)
-    {
-        $restroom = Restroom::find($request->id);
-
-        return view('edit_restroom')->with('restroom', $restroom);
-    }
-
-    public function search_restrooms(Request $request)
-    {
-        return view('search_restrooms');
-    }
-
-    public function admin_login(Request $request)
-    {
+        /* Get password entered by user */
         $paramPwd = $request->admin_password;
 
-        if (isset($paramPwd))
-        {
-            if (self::passwordMatches($paramPwd))
-            {
-                Session::flash("Authorised", "Logged in as admin");
-                $request->session()->put("admin_logged_in", true);
+        /* If they have provided a password */
+        if (isset($paramPwd)) {
+            /* If the password is correct, assign session variable and redirect
+            back to the Home */
+            if (self::passwordMatches($paramPwd)) {
+                Session::flash("flash_success", "Logged in as an Administrator.");
+                $request->session()->put("admin", true);
                 return redirect('/');
             }
-
-            Session::flash("Unauthorised", "Invalid Password!");
-
-            return redirect('/admin-login');
+            /* If the password is not correct, redirect back to the login
+            page and show errors */
+            else {
+                Session::flash("flash_invalid_pwd", "Incorrect Password!");
+                return redirect('/admin-login');
+            }
         }
-        
-        Session::flash("Blank", "Password cannot be blank!");
 
+        /* In this case, user has not provided a password so redirect back to
+        the login page with appropriate error */
+        Session::flash("flash_blank_pwd", "Password cannot be blank!");
         return redirect('/admin-login');
-
     }
 
-    public function admin_logout(Request $request)
-    {
-        Session::flush();
-        return redirect('/');
-    }
-
+    /* Returns true/false if password provided is correct */
     private function passwordMatches(string $plainTextPwd) : bool
     {
-        $hashedAdminPwd = file_get_contents(storage_path(self::HASHED_PWD_PATH));
-        return ($hashedAdminPwd == self::hashPassword($plainTextPwd));
+        $hashedAdminPwd = trim(file_get_contents(storage_path(self::HASHED_PWD_PATH)));
+        return ($hashedAdminPwd == trim(self::hashPassword($plainTextPwd)));
     }
 
-    private function hashPassword(string $plainTextPwd)
+    public static function hashPassword(string $plainTextPwd) : string
     {
         $hashedPwd = $plainTextPwd;
         $salt = file_get_contents(storage_path(self::SALT_PATH));
@@ -76,10 +58,5 @@ class AdminController extends Controller
         {
             $hashedPwd = hash('sha256', $hashedPwd.$salt);
         } return $hashedPwd;
-    }
-
-    private function addPasswordToFile(string $plainTextPwd)
-    {
-        file_put_contents(storage_path(self::HASHED_PWD_PATH), self::hashPassword($plainTextPwd));
     }
 }

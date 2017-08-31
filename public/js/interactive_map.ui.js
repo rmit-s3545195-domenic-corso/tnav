@@ -49,7 +49,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 	headerDIV.className = "result_header";
 
 	/* Options for nameDIV */
-	nameDIV.className = "results_rr_name";
+	nameDIV.className = "result_rr_name";
 	nameDIV.appendChild(document.createTextNode(result.name));
 
 	/* Options for starsContDIV */
@@ -72,7 +72,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 	}
 
 	/* Options for tags */
-	tagsContDIV.className = "results_tag_cont";
+	tagsContDIV.className = "result_tag_cont";
 	for (let i = 0; i < result.tagUrls.length; i++) {
 		let tagImage = document.createElement("img");
 		tagImage.setAttribute("src", result.tagUrls[i]);
@@ -80,11 +80,11 @@ InteractiveMap.ui.generateResultCont = function(result) {
 		tagsContDIV.appendChild(tagImage);
 	}
 	/* Options for descDIV */
-	descDIV.className = "results_desc";
+	descDIV.className = "result_desc";
 	descDIV.appendChild(document.createTextNode(result.desc));
 
 	/* Options for photosContDIV */
-	photosContDIV.className = "results_photos_cont";
+	photosContDIV.className = "result_photos_cont";
 	for (let i = 0; i < result.photoUrls.length; i++) {
 		let photoImg = document.createElement ("img");
 		photoImg.setAttribute ("src", result.photoUrls[i]);

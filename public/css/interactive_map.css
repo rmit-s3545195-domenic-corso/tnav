@@ -95,7 +95,7 @@
     flex-wrap: wrap;
 }
 
-.results_rr_name {
+.result_rr_name {
     font-weight: bold;
     flex-grow: 1;
     padding-right: 5px;
@@ -115,23 +115,23 @@
     margin-right: 0;
 }
 
-.results_tag_cont {
+.result_tag_cont {
     height: 30px;
     padding-bottom: 7px;
 }
 
-.results_tag_cont > img {
+.result_tag_cont > img {
     height: 100%;
     margin-right: 5px;
 }
 
-.results_photos_cont {
+.result_photos_cont {
     height: 82px;
     padding-top: 7px;
     overflow-y: auto;
 }
 
-.results_photos_cont > img {
+.result_photos_cont > img {
     height: 100%;
     display: block;
     border-bottom: 7px solid rgba(0, 0, 0, 0);

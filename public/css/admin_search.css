@@ -1,0 +1,22 @@
+#search_container {
+    margin-top: 40px;
+}
+
+#search_results_title {
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.search_result {
+    padding: 10px;
+    border-bottom: 2px solid #DDD;
+}
+
+.search_result:last-of-type {
+    border-bottom: none;
+    
+}
+
+.search_result .rr_title {
+    font-size: 120%;
+}
