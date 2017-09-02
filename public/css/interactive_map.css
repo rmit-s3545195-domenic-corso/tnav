@@ -138,3 +138,84 @@
     float: left;
     margin-right: 5px;
 }
+
+.restroom_img:hover {
+    cursor: pointer;
+    opacity: 0.6;
+    border-radius: 2px;
+}
+
+/* RESULTS IMAGE VIEWER */
+
+/* The actual image viewer */
+#photo_cont {
+    position: fixed;
+    display: none;
+    z-index: 1;
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    top: 0;
+    padding-top: 100px;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+}
+
+.rr_image {
+    display: block;
+    margin: auto;
+    width: 50%;
+    height: 80%;
+}
+
+#close {
+    color: white;
+}
+
+#close:hover {
+    color: #bbb
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+#left {
+    color: white;
+}
+
+#right {
+    color: white;
+}
+
+#left:hover {
+    color: #bbb
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+#right:hover {
+    color: #bbb
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.5;
+}
+
+.image_view_navigation {
+        text-align: center;
+}
+
+.close_btn {
+    text-align: right;
+    margin-right: 350px;
+}
+
+#caption {
+    font-size: 20px;
+    text-align: center;
+    margin: auto;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+}

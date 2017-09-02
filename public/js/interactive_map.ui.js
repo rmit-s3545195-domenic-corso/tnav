@@ -89,6 +89,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 		let photoImg = document.createElement ("img");
 		photoImg.setAttribute ("src", result.photoUrls[i]);
 		photoImg.setAttribute("alt", "photo");
+        photoImg.className = "restroom_img";
 		photosContDIV.appendChild(photoImg);
 	}
 

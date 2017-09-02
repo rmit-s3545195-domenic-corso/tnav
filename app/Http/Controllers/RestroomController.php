@@ -85,7 +85,7 @@ class RestroomController extends Controller
         if (!file_exists($path)) {
             File::makeDirectory(public_path('/img/'.$newRestroom->id));
         }
-        if (self::countImagesInDirectory(count($request->rr_photos), $path, $newRestroom)) {
+        if (self::exceedImageLimitInDirectory(count($request->rr_photos), $path, $newRestroom)) {
             Session::flash("flash_filecount", "Photo Limit for this restroom have been reached");
             return redirect('/add-restroom')
                 ->withInput();
@@ -95,7 +95,7 @@ class RestroomController extends Controller
         self::upload($path, $request, $newRestroom);
 
         /* Check if the number is less than 15 */
-        if (!self::countImagesInDatabase($newRestroom)) {
+        if (!self::exceedImageLimitInDirectory($newRestroom)) {
             for ($i = 0; $i < count($request->rr_photos); $i++) {
                 if (self::file_exists_in_database($i, $request)) { continue; } else {
                     /* Check if the image is already in the database */
@@ -144,7 +144,7 @@ class RestroomController extends Controller
             File::makeDirectory(public_path('/img/'.$restroom->id));
         }
 
-        if (self::countImagesInDirectory(count($request->rr_photos), $path, $restroom)) {
+        if (self::exceedImageLimitInDirectory(count($request->rr_photos), $path, $restroom)) {
             Session::flash("flash_filecount", "Photo Limit for this restroom have been reached");
             return redirect('/edit/' . $restroom->id)
                 ->withInput();
@@ -154,7 +154,7 @@ class RestroomController extends Controller
         self::upload($path, $request, $restroom);
 
         /* Check if the number is less than 15 */
-        if (!self::countImagesInDatabase($restroom)) {
+        if (!self::exceedImageLimitInDirectory($restroom)) {
             for ($i = 0; $i < count($request->rr_photos); $i++) {
                 if (self::file_exists_in_database($i, $request)) { continue; } else {
                     /* Create a new Restroom Photo if there are images in the request */
@@ -219,7 +219,7 @@ class RestroomController extends Controller
         } else { return false; }
     }
 
-    private function countImagesInDatabase(Restroom $restroom) : bool
+    private function exceedImageLimitInDatabase(Restroom $restroom) : bool
     {
         $restroomPhotos = RestroomPhoto::where('restroomID', '=', $restroom->id)->get();
         if (count($restroomPhotos) > 15) {
@@ -227,7 +227,7 @@ class RestroomController extends Controller
         } else { return false; }
     }
 
-    private function countImagesInDirectory(int $uploadedFiles, String $path, Restroom $curr_restroom) : bool
+    private function exceedImageLimitInDirectory(int $uploadedFiles, String $path, Restroom $curr_restroom) : bool
     {
         $files = (count(scandir($path)) - 2);
         if ($files + $uploadedFiles > 15) {
