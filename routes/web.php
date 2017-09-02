@@ -52,6 +52,10 @@ Route::get('/add-restroom', function () {
 /* Process 'Add Restroom' attempt */
 Route::post('/add-restroom', 'RestroomController@add');
 
+/* Query the database by Geolocation and return list (JSON array) of nearby
+restrooms */
+Route::get('search-query-geo', 'RestroomController@searchByGeoPos');
+
 /* *ADMIN* Log out the admin */
 Route::get('/admin-logout', function () {
     /* Clear the session and go back to home */
@@ -62,11 +66,7 @@ Route::get('/admin-logout', function () {
 
 /* *ADMIN* Show 'Search Restroom's form */
 Route::get('/admin-search', function () {
-  if (Session::has('admin')) {
     return view('admin_search');
-  }
-  Session::flash("flash_not_admin", "Sorry you must be an Administrator to enter this page");
-  return redirect('/');
 });
 
 /* *ADMIN* Query the database and return JSON result (AJAX) */
@@ -77,12 +77,8 @@ Route::get('/delete-restroom/{id}', 'RestroomController@delete');
 
 /* *ADMIN* Show 'Edit Restroom' form */
 Route::get('/edit/{id}', function (Request $request) {
-  if (Session::has('admin')) {
     $restroom = Restroom::find($request->id);
     return view('edit_restroom')->with('restroom', $restroom);
-  }
-  Session::flash("flash_not_admin", "Sorry you must be an Administrator to enter this page");
-  return redirect('/');
 });
 
 /* *ADMIN* Process 'Edit Restroom' attempt */
