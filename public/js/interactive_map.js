@@ -1,48 +1,56 @@
 let InteractiveMap = {
     map: null,
-    marker: null,
+    youAreHereMarker: null,
+    youAreHereInfoWindow: null,
     e: {
-        map: document.getElementById("map")
+        map: document.getElementById("map"),
+        findNearMeBtn: document.getElementById("btn_use_loc")
     },
-    STARTING_ZOOM: 16
+    STARTING_ZOOM: 14
 };
 
-InteractiveMap.functionReturns = {
-    setCenterPos: function() {
-        let centerPos = this.map.getCenter();
+InteractiveMap.evtCallbacks = {
+    findNearMe: function() {
+        tnav.location.getPosition(
+            /* Success */
+            function(geoPos) {
+                InteractiveMap.setCenterPos(geoPos);
+                InteractiveMap.setYouAreHere(geoPos);
+            },
+            /* Failure */
+            function() {
 
-        /* move the marker to the center of map */
-        this.marker.setPosition(centerPos);
-    },
-
-    getGeoPos: function() {
-        let success = function(geoPos) {
-            /* grab lat/lng data from the Geoposition object
-            returned from browser */
-            let lat = geoPos.coords.latitude;
-            let lng = geoPos.coords.longitude;
-
-            /* move the center position of the map to match the
-            lat/lng values returned from browser */
-            this.map.setCenter({
-                lat: lat,
-                lng: lng
-            });
-        };
-
-        let failure = function() {
-            alert("A request for your location has failed");
-        };
-
-        tnav.location.getPosition(success.bind(this),
-            failure.bind(this));
+            }
+        );
     }
 };
 
-InteractiveMap.init = function(startingLocation) {
+InteractiveMap.setCenterPos = function(geoPos) {
+    this.map.setCenter({
+        lat: geoPos.coords.latitude,
+        lng: geoPos.coords.longitude
+    });
+};
+
+InteractiveMap.setYouAreHere = function(geoPos) {
+    this.youAreHereMarker.setPosition({
+        lat: geoPos.coords.latitude,
+        lng: geoPos.coords.longitude
+    });
+
+    this.youAreHereInfoWindow.open(this.map, this.youAreHereMarker);
+};
+
+/* Make a request to database to find restrooms around a particular
+latLng location, then fill results and show markers on map */
+InteractiveMap.fetchRestroomList = function(latLng) {
+
+};
+
+InteractiveMap.init = function() {
     let mapOptions = {
         zoom: this.STARTING_ZOOM,
-        center: startingLocation,
+        center: tnav.DEFAULT_MAPS_POS,
         streetViewControl: false,
         scaleControl: false,
         rotateControl: false,
@@ -51,18 +59,25 @@ InteractiveMap.init = function(startingLocation) {
         clickableIcons: false
     };
 
-    /* load the map */
+    /* Load map */
     this.map = new google.maps.Map(this.e.map, mapOptions);
 
-    /* set a marker in the center position */
-    this.marker = new google.maps.Marker({
-        position: startingLocation,
-        map: this.map
+    /* Initialize 'You are here' marker */
+    this.youAreHereMarker = new google.maps.Marker({
+        map: this.map,
+        animation: google.maps.Animation.DROP
     });
+
+    this.youAreHereInfoWindow = new google.maps.InfoWindow({
+         content: 'You are here'
+    });
+
+    this.addListeners();
 };
 
-/* object literal to be replaced by actual user location */
-InteractiveMap.init({
-    lat: -37.816,
-    lng: 144.969
-});
+InteractiveMap.addListeners = function() {
+    this.e.findNearMeBtn.addEventListener("click",
+    this.evtCallbacks.findNearMe.bind(this));
+};
+
+InteractiveMap.init();

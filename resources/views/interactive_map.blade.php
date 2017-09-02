@@ -10,7 +10,7 @@
     <!-- Custom Search Bar -->
     <div id="search_cont">
         <button class="btn btn-success" id="btn_use_loc" type="button">
-            <span class="glyphicon glyphicon-record"></span>Find Near Me
+            <span class="glyphicon glyphicon-record"></span> Find Near Me
         </button>
         <strong id="static_or_text">OR</strong>
         <input type="text" id="inp_search" placeholder="Enter keywords" />
