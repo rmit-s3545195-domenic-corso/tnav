@@ -32,9 +32,9 @@
 
             <div id="photo_counter"><span id="current_photo_number"></span> / <span id="total_photo_count"></span></div>
             <div id='image_view_navigation'>
-                <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left"></span>
-                <span id="close" class="btn btn-danger glyphicon glyphicon-remove"></span>
-                <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right"></span>
+                <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left" title="Previous Image"></span>
+                <span id="close" class="btn btn-danger glyphicon glyphicon-remove" title="Close"></span>
+                <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right" title="Next Image"></span>
             </div>
         </div>
     </div>

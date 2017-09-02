@@ -142,6 +142,9 @@ InteractiveMap.ui.init = function() {
             "img/rr_photo_1.jpg",
             "img/rr_photo_3.jpg",
             "img/rr_photo_4.jpg",
+            "img/rr_photo_4.jpg",
+            "img/rr_photo_4.jpg",
+            "img/rr_photo_4.jpg",
 		],
 		tagUrls: [
 			"img/unisex.png",
