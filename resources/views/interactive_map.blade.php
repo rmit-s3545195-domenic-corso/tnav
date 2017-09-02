@@ -26,17 +26,14 @@
         <!-- Container for the enlarged img -->
         <div id="photo_cont" class="photo_container">
 
-            <div class="close_btn">
-                <span id="close" class="glyphicon glyphicon-remove" onclick="document.getElementById('photo_cont').style.display='none'">Close</span>
-            </div>
-
             <div id="caption"></div>
 
             <img class="rr_image" id="rr_image_display" />
 
             <div class='image_view_navigation'>
-                <span id="left" class="glyphicon glyphicon-chevron-left">Previous</span>
-                <span id="right" class="glyphicon glyphicon-chevron-right">Next</span>
+                <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left"></span>
+                <span id="close" class="btn btn-danger glyphicon glyphicon-remove"></span>
+                <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right"></span>
             </div>
         </div>
     </div>

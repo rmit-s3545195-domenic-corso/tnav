@@ -87,6 +87,11 @@
     text-overflow: hidden;
 }
 
+.result_container:hover {
+    background-color: #DCDCDC;
+    cursor: pointer;
+}
+
 .result_header {
     width: 100%;
     padding-bottom: 7px;
@@ -141,13 +146,13 @@
 
 .restroom_img:hover {
     cursor: pointer;
-    opacity: 0.6;
+    opacity: 0.7;
     border-radius: 2px;
 }
 
 /* RESULTS IMAGE VIEWER */
 
-/* The actual image viewer */
+/* The Actual Container for the enlarged image */
 #photo_cont {
     position: fixed;
     display: none;
@@ -159,6 +164,16 @@
     overflow: auto;
     width: 100%;
     height: 100%;
+    animation: zoom 1s;
+}
+
+/* Zoom Animation for the container upon click */
+@keyframes zoom {
+    from {
+        transform: scale(0);
+    } to {
+        transition: scale(1);
+    }
 }
 
 .rr_image {
@@ -176,46 +191,37 @@
     color: #bbb
     text-decoration: none;
     cursor: pointer;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
-#left {
+#left, #right {
     color: white;
 }
 
-#right {
-    color: white;
-}
-
-#left:hover {
+#left:hover , #right:hover{
     color: #bbb
     text-decoration: none;
     cursor: pointer;
-    opacity: 0.5;
-}
-
-#right:hover {
-    color: #bbb
-    text-decoration: none;
-    cursor: pointer;
-    opacity: 0.5;
+    opacity: 0.7;
 }
 
 .image_view_navigation {
-        text-align: center;
-}
-
-.close_btn {
-    text-align: right;
-    margin-right: 350px;
+    text-align: center;
 }
 
 #caption {
-    font-size: 20px;
+    font-size: 25px;
     text-align: center;
     margin: auto;
     text-transform: uppercase;
     font-weight: bold;
     color: white;
     padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .rr_image {
+        width: 100%;
+        height: 100%;
+    }
 }
