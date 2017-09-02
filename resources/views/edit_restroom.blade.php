@@ -8,7 +8,8 @@
 
 @section('content')
     <div class="container">
-        <h1>Edit Restroom</h1>
+        <h1>Update Restroom: {{ $restroom->name }}</h1>
+        <a class="btn btn-danger" href="{{ url('/delete-restroom/'.$restroom->id) }}"> Delete </a>
         @include('partials.errors')
         <form action="{{ url('/edit/'.$restroom->id) }}" method="post">
             @include('partials.restroom_input', $restroom)

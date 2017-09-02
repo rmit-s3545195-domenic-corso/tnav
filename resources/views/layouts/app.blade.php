@@ -52,6 +52,11 @@
                     <strong>{{ Session::get('flash_success') }}</strong>
                 </div>
             @endif
+            @if (Session::has('flash_not_admin'))
+                <div class="alert alert-danger">
+                    <strong>{{ Session::get('flash_not_admin') }}</strong>
+                </div>
+            @endif
             @yield('content')
         </div>
         <script src="{{ url('/js/lib/BL.js') }}"></script>
