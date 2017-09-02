@@ -54,7 +54,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 
 	/* Options for starsContDIV */
 	starsContDIV.className = "result_stars_cont";
-	let fullStars = result.rating;
+	let fullStars = 0 | result.rating;
 	let emptyStars = 5 - fullStars;
 
 	/* Add full stars */
@@ -71,26 +71,30 @@ InteractiveMap.ui.generateResultCont = function(result) {
 		starsContDIV.appendChild(star);
 	}
 
-	/* Options for tags */
-	tagsContDIV.className = "result_tag_cont";
-	for (let i = 0; i < result.tagUrls.length; i++) {
-		let tagImage = document.createElement("img");
-		tagImage.setAttribute("src", result.tagUrls[i]);
-		tagImage.setAttribute("alt", "tag");
-		tagsContDIV.appendChild(tagImage);
-	}
+    if (result.tagUrls) {
+    	/* Options for tags */
+    	tagsContDIV.className = "result_tag_cont";
+    	for (let i = 0; i < result.tagUrls.length; i++) {
+    		let tagImage = document.createElement("img");
+    		tagImage.setAttribute("src", result.tagUrls[i]);
+    		tagImage.setAttribute("alt", "tag");
+    		tagsContDIV.appendChild(tagImage);
+    	}
+    }
 	/* Options for descDIV */
 	descDIV.className = "result_desc";
-	descDIV.appendChild(document.createTextNode(result.desc));
+	descDIV.appendChild(document.createTextNode(result.description));
 
 	/* Options for photosContDIV */
 	photosContDIV.className = "result_photos_cont";
-	for (let i = 0; i < result.photoUrls.length; i++) {
-		let photoImg = document.createElement ("img");
-		photoImg.setAttribute ("src", result.photoUrls[i]);
-		photoImg.setAttribute("alt", "photo");
-		photosContDIV.appendChild(photoImg);
-	}
+    if (result.photoUrls) {
+    	for (let i = 0; i < result.photoUrls.length; i++) {
+    		let photoImg = document.createElement ("img");
+    		photoImg.setAttribute ("src", result.photoUrls[i]);
+    		photoImg.setAttribute("alt", "photo");
+    		photosContDIV.appendChild(photoImg);
+    	}
+    }
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -104,6 +108,24 @@ InteractiveMap.ui.generateResultCont = function(result) {
 
 InteractiveMap.ui.addResultCont = function(resultCont) {
 	this.e.results.appendChild(resultCont);
+};
+
+InteractiveMap.ui.clearResults = function() {
+    while (this.e.results.firstChild) {
+        this.e.results.removeChild(this.e.results.firstChild);
+    }
+};
+
+/* Accepts an array of results (restrooms) and updates the panel to include them
+in the results */
+InteractiveMap.ui.addNewResultSet = function(results) {
+    this.clearResults();
+
+    let resultCont;
+    for (let i = 0; i < results.length; i++) {
+        resultCont = this.generateResultCont(results[i]);
+        this.addResultCont(resultCont);
+    }
 };
 
 InteractiveMap.ui.init = function() {
