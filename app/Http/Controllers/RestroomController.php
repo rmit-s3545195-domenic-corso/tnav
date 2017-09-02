@@ -200,7 +200,6 @@ class RestroomController extends Controller
             ->toJson();
     }
 
-<<<<<<< HEAD
     /* Passes in the request with the uploaded files and stores them in a folder with the restroom id */
     private function upload(String $path, Request $request, Restroom $curr_restroom)
     {
@@ -235,7 +234,8 @@ class RestroomController extends Controller
         if ($files + $uploadedFiles > 15) {
             return true;
         } else { return false; }
-=======
+    }
+
     public function searchByGeoPos(Request $request)
     {
         /* Get latitude/longitude values in Request */
@@ -290,6 +290,5 @@ class RestroomController extends Controller
 
     private function simplifyLatLngVal(string $latLngText) : float {
         return round(floatval($latLngText), 5);
->>>>>>> Restroom results now show on Interactive Map page in both results panel and on the map as markers
     }
 }
