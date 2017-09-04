@@ -112,6 +112,12 @@ ImageViewer.addListeners = function() {
 
     this.e.close_btn.addEventListener("click", this.evtCallbacks.closeClicked.bind(this));
 
+    document.addEventListener("keydown", function(keyevent) {
+        if(keyevent.keyCode == 27) {
+          this.e.photo_cont.style.display = "none";
+        }
+    }.bind(this));
+
     this.e.left_btn.addEventListener("click", this.evtCallbacks.leftClicked.bind(this));
 
     this.e.right_btn.addEventListener("click", this.evtCallbacks.rightClicked.bind(this));
