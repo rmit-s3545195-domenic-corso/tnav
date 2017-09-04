@@ -176,7 +176,7 @@
     }
 }
 
-.rr_image {
+#rr_image_display {
     display: block;
     margin: auto;
     width: 50%;
@@ -205,11 +205,11 @@
     opacity: 0.7;
 }
 
-.image_view_navigation {
+#image_view_navigation {
     text-align: center;
 }
 
-#caption {
+#caption, #photo_counter {
     font-size: 25px;
     text-align: center;
     margin: auto;

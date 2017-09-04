@@ -7,21 +7,35 @@ let ImageViewer = {
         left_btn: document.getElementById("left"),
         right_btn: document.getElementById("right"),
         close_btn: document.getElementById("close"),
-        restroom_image: document.getElementsByClassName('restroom_img')
+        restroom_image: document.getElementsByClassName('restroom_img'),
+        current_photo_count: document.getElementById("current_photo_number"),
+        total_photo_count: document.getElementById("total_photo_count"),
+        photo_location: 1,
+        current_photo_cont: null
     }
 };
 
 ImageViewer.evtCallbacks = {
     imageClicked: function(mouseEvent) {
 
+        /* Setting the current photo container to the parent element of clicked target image */
+        this.e.current_photo_cont = mouseEvent.target.parentElement;
+
         /* Set the enlarged photo container to show */
         this.e.photo_cont.style.display = "block";
 
-        //set the photo container image source to the current clicked source
+        /* set the photo container image source to the current clicked source */
         this.e.image_content.src = mouseEvent.target.getAttribute("src");
 
-        //Set the Caption text to the current image alt
+        /* Set the Caption text to the current image alt */
         this.e.caption.innerHTML = mouseEvent.target.getAttribute("alt");
+
+        /* Set the inital photo count elements */
+        this.e.photo_location = ImageViewer.findCurrentIndex(0) + 1;
+
+        this.e.current_photo_count.innerHTML = this.e.photo_location;
+
+        this.e.total_photo_count.innerHTML = this.e.current_photo_cont.children.length;
     },
 
     closeClicked: function() {
@@ -29,40 +43,65 @@ ImageViewer.evtCallbacks = {
     },
 
     leftClicked: function(mouseEvent) {
-        let arrray_location = 0;
 
-        for(let i = 0; i < this.e.restroom_image.length; i++)
-        {
-            if(this.e.image_content.getAttribute("src") == this.e.restroom_image[i].getAttribute("src")) {
-                arrray_location = i;
-            }
-        }
+        /* Set an initial array location to 0 */
+        /* For each element in the current photo container if the src matches, then set the array location to that location */
+        let array_location = ImageViewer.findCurrentIndex(0);
 
-        console.log(arrray_location - 1);
-        if (arrray_location - 1 != -1) {
-            this.e.image_content.src = this.e.restroom_image[arrray_location - 1].getAttribute("src");
+        /* If the array location - 1 goes past 0 and is not -1 then do arrray_location - 1 to get the previous image
+         * Else go the last image in the current photo container */
+        if (array_location - 1 != -1) {
+            this.e.image_content.src = this.e.current_photo_cont.children[array_location - 1].getAttribute("src");
         } else {
-            this.e.image_content.src = this.e.restroom_image[this.e.restroom_image.length - 1].getAttribute("src");
+            this.e.image_content.src = this.e.current_photo_cont.children[this.e.current_photo_cont.children.length - 1].getAttribute("src");
         }
+
+        /* If the array location - 1 is not -1 then set the photo location to one down  */
+        if (array_location - 1 != -1) {
+            this.e.photo_location = this.e.photo_location - 1;
+            this.e.current_photo_count.innerHTML = this.e.photo_location;
+        }
+
+        /* if the array location - 1 is -1 then set the photo location the total length in the container */
+        if (array_location - 1 == -1) {
+            this.e.photo_location = this.e.current_photo_cont.children.length;
+            this.e.current_photo_count.innerHTML = this.e.photo_location;
+        }
+
     },
 
     rightClicked: function(mouseEvent) {
-        let arrray_location = 0;
+        let array_location = ImageViewer.findCurrentIndex(0);
 
-        for(let i = 0; i < this.e.restroom_image.length; i++)
-        {
-            if(this.e.image_content.getAttribute("src") == this.e.restroom_image[i].getAttribute("src")) {
-                arrray_location = i;
-            }
+        if (array_location + 1 < this.e.current_photo_cont.children.length) {
+            this.e.image_content.src = this.e.current_photo_cont.children[array_location + 1].getAttribute("src");
+        } else {
+            this.e.image_content.src = this.e.current_photo_cont.children[0].getAttribute("src");
         }
 
-        console.log(arrray_location - 1);
-        if (arrray_location + 1 < this.e.restroom_image.length) {
-            this.e.image_content.src = this.e.restroom_image[arrray_location + 1].getAttribute("src");
-        } else {
-            this.e.image_content.src = this.e.restroom_image[0].getAttribute("src");
+        /* Set the new photo location number to + 1 if the location now is less than the total length */
+        if (array_location + 1 < this.e.current_photo_cont.children.length) {
+            this.e.photo_location = this.e.photo_location + 1;
+            this.e.current_photo_count.innerHTML = this.e.photo_location;
+        }
+
+        /* Reset the photo location to 1 if the current location + 1 is greater or equal to the photo container length */
+        if (array_location + 1 >= this.e.current_photo_cont.children.length) {
+            this.e.photo_location = 1;
+            this.e.current_photo_count.innerHTML = this.e.photo_location;
         }
     }
+};
+
+ImageViewer.findCurrentIndex = function(array_location) {
+    for(let i = 0; i < this.e.current_photo_cont.children.length; i++)
+    {
+        if(this.e.image_content.getAttribute("src") == this.e.current_photo_cont.children[i].getAttribute("src")) {
+            array_location = i;
+        }
+    }
+
+    return array_location;
 };
 
 ImageViewer.addListeners = function() {

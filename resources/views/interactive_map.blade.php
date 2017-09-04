@@ -24,13 +24,14 @@
         <div id="map"></div>
         <div id="results"></div>
         <!-- Container for the enlarged img -->
-        <div id="photo_cont" class="photo_container">
+        <div id="photo_cont">
 
             <div id="caption"></div>
 
-            <img class="rr_image" id="rr_image_display" />
+            <img id="rr_image_display" />
 
-            <div class='image_view_navigation'>
+            <div id="photo_counter"><span id="current_photo_number"></span> / <span id="total_photo_count"></span></div>
+            <div id='image_view_navigation'>
                 <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left"></span>
                 <span id="close" class="btn btn-danger glyphicon glyphicon-remove"></span>
                 <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right"></span>
