@@ -16,7 +16,7 @@ class CreateRestroomPhotosTable extends Migration
         Schema::create('restroom_photos', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('addedBy');
+            $table->string('addedBy')->nullable();
             $table->string('path');
             $table->integer('reports');
             $table->integer('restroomID');

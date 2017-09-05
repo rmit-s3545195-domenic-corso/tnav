@@ -23,6 +23,20 @@
     <div id="map_results_cont">
         <div id="map"></div>
         <div id="results"></div>
+        <!-- Container for the enlarged img -->
+        <div id="photo_cont">
+
+            <div id="caption"></div>
+
+            <img id="rr_image_display" />
+
+            <div id="photo_counter"><span id="current_photo_number"></span> / <span id="total_photo_count"></span></div>
+            <div id='image_view_navigation'>
+                <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left"></span>
+                <span id="close" class="btn btn-danger glyphicon glyphicon-remove"></span>
+                <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right"></span>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -30,4 +44,5 @@
     <script src="{{ url('/js/tnav.location.js') }}"></script>
     <script src="{{ url('/js/interactive_map.js') }}"></script>
     <script src="{{ url('/js/interactive_map.ui.js') }}"></script>
+    <script src="{{ url('/js/image_view.js') }}"></script>
 @endsection

@@ -87,6 +87,11 @@
     text-overflow: hidden;
 }
 
+.result_container:hover {
+    background-color: #DCDCDC;
+    cursor: pointer;
+}
+
 .result_header {
     width: 100%;
     padding-bottom: 7px;
@@ -137,4 +142,86 @@
     border-bottom: 7px solid rgba(0, 0, 0, 0);
     float: left;
     margin-right: 5px;
+}
+
+.restroom_img:hover {
+    cursor: pointer;
+    opacity: 0.7;
+    border-radius: 2px;
+}
+
+/* RESULTS IMAGE VIEWER */
+
+/* The Actual Container for the enlarged image */
+#photo_cont {
+    position: fixed;
+    display: none;
+    z-index: 1;
+    margin: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    top: 0;
+    padding-top: 100px;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    animation: zoom 1s;
+}
+
+/* Zoom Animation for the container upon click */
+@keyframes zoom {
+    from {
+        transform: scale(0);
+    } to {
+        transition: scale(1);
+    }
+}
+
+#rr_image_display {
+    display: block;
+    margin: auto;
+    width: 50%;
+    height: 80%;
+}
+
+#close {
+    color: white;
+}
+
+#close:hover {
+    color: #bbb
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+#left, #right {
+    color: white;
+}
+
+#left:hover , #right:hover{
+    color: #bbb
+    text-decoration: none;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+#image_view_navigation {
+    text-align: center;
+}
+
+#caption, #photo_counter {
+    font-size: 25px;
+    text-align: center;
+    margin: auto;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: white;
+    padding: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .rr_image {
+        width: 100%;
+        height: 100%;
+    }
 }

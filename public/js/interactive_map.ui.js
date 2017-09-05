@@ -87,14 +87,13 @@ InteractiveMap.ui.generateResultCont = function(result) {
 
 	/* Options for photosContDIV */
 	photosContDIV.className = "result_photos_cont";
-    if (result.photoUrls) {
-    	for (let i = 0; i < result.photoUrls.length; i++) {
-    		let photoImg = document.createElement ("img");
-    		photoImg.setAttribute ("src", result.photoUrls[i]);
-    		photoImg.setAttribute("alt", "photo");
-    		photosContDIV.appendChild(photoImg);
-    	}
-    }
+	for (let i = 0; i < result.photoUrls.length; i++) {
+		let photoImg = document.createElement ("img");
+		photoImg.setAttribute ("src", result.photoUrls[i]);
+		photoImg.setAttribute("alt", "photo");
+        photoImg.className = "restroom_img";
+		photosContDIV.appendChild(photoImg);
+	}
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -140,6 +139,9 @@ InteractiveMap.ui.init = function() {
 		photoUrls: [
 			"img/rr_photo_2.jpg",
 			"img/rr_photo_5.jpg",
+            "img/rr_photo_1.jpg",
+            "img/rr_photo_3.jpg",
+            "img/rr_photo_4.jpg",
 		],
 		tagUrls: [
 			"img/unisex.png",
