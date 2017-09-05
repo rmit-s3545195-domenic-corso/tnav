@@ -15,8 +15,6 @@ use Session;
 class RestroomController extends Controller
 {
     const FILETYPES = array('image/png', 'image/jpeg', 'image/jpg');
-    const HASH_RUNS = 20000;
-    const SALT_PATH = "/app/filename_salt";
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -35,12 +33,7 @@ class RestroomController extends Controller
     private static function hashFileName(string $filename) : string
     {
         $hashedFilename = $filename;
-        $salt = file_get_contents(storage_path(self::SALT_PATH));
-
-        for ($i = 0; $i < self::HASH_RUNS; $i++) {
-            $hashedFilename = hash('sha256', $hashedFilename.$salt);
-        }
-
+        $hashedFilename = hash('sha256', $hashedFilename);
         return $hashedFilename;
     }
 
@@ -96,7 +89,7 @@ class RestroomController extends Controller
         self::upload($path, $request, $newRestroom);
 
         /* Check if the number is less than 15 */
-        if (!self::exceedImageLimitInDirectory($newRestroom)) {
+        if (!self::exceedImageLimitInDatabase($newRestroom)) {
             for ($i = 0; $i < count($request->rr_photos); $i++) {
                 if (self::file_exists_in_database($i, $request)) { continue; } else {
                     /* Check if the image is already in the database */
@@ -155,7 +148,7 @@ class RestroomController extends Controller
         self::upload($path, $request, $restroom);
 
         /* Check if the number is less than 15 */
-        if (!self::exceedImageLimitInDirectory($restroom)) {
+        if (!self::exceedImageLimitInDatabase($restroom)) {
             for ($i = 0; $i < count($request->rr_photos); $i++) {
                 if (self::file_exists_in_database($i, $request)) { continue; } else {
                     /* Create a new Restroom Photo if there are images in the request */
