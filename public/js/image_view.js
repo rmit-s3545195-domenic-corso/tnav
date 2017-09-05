@@ -43,53 +43,59 @@ ImageViewer.evtCallbacks = {
     },
 
     leftClicked: function(mouseEvent) {
-
-        /* Set an initial array location to 0 */
-        /* For each element in the current photo container if the src matches, then set the array location to that location */
-        let array_location = ImageViewer.findCurrentIndex(0);
-
-        /* If the array location - 1 goes past 0 and is not -1 then do arrray_location - 1 to get the previous image
-         * Else go the last image in the current photo container */
-        if (array_location - 1 != -1) {
-            this.e.image_content.src = this.e.current_photo_cont.children[array_location - 1].getAttribute("src");
-        } else {
-            this.e.image_content.src = this.e.current_photo_cont.children[this.e.current_photo_cont.children.length - 1].getAttribute("src");
-        }
-
-        /* If the array location - 1 is not -1 then set the photo location to one down  */
-        if (array_location - 1 != -1) {
-            this.e.photo_location = this.e.photo_location - 1;
-            this.e.current_photo_count.innerHTML = this.e.photo_location;
-        }
-
-        /* if the array location - 1 is -1 then set the photo location the total length in the container */
-        if (array_location - 1 == -1) {
-            this.e.photo_location = this.e.current_photo_cont.children.length;
-            this.e.current_photo_count.innerHTML = this.e.photo_location;
-        }
-
+        this.changeImageLeft();
     },
 
     rightClicked: function(mouseEvent) {
-        let array_location = ImageViewer.findCurrentIndex(0);
+        this.changeImageRight();
+    }
+};
 
-        if (array_location + 1 < this.e.current_photo_cont.children.length) {
-            this.e.image_content.src = this.e.current_photo_cont.children[array_location + 1].getAttribute("src");
-        } else {
-            this.e.image_content.src = this.e.current_photo_cont.children[0].getAttribute("src");
-        }
+ImageViewer.changeImageRight = function (mouseEvent) {
+    let array_location = ImageViewer.findCurrentIndex(0);
 
-        /* Set the new photo location number to + 1 if the location now is less than the total length */
-        if (array_location + 1 < this.e.current_photo_cont.children.length) {
-            this.e.photo_location = this.e.photo_location + 1;
-            this.e.current_photo_count.innerHTML = this.e.photo_location;
-        }
+    if (array_location + 1 < this.e.current_photo_cont.children.length) {
+        this.e.image_content.src = this.e.current_photo_cont.children[array_location + 1].getAttribute("src");
+    } else {
+        this.e.image_content.src = this.e.current_photo_cont.children[0].getAttribute("src");
+    }
 
-        /* Reset the photo location to 1 if the current location + 1 is greater or equal to the photo container length */
-        if (array_location + 1 >= this.e.current_photo_cont.children.length) {
-            this.e.photo_location = 1;
-            this.e.current_photo_count.innerHTML = this.e.photo_location;
-        }
+    /* Set the new photo location number to + 1 if the location now is less than the total length */
+    if (array_location + 1 < this.e.current_photo_cont.children.length) {
+        this.e.photo_location = this.e.photo_location + 1;
+        this.e.current_photo_count.innerHTML = this.e.photo_location;
+    }
+
+    /* Reset the photo location to 1 if the current location + 1 is greater or equal to the photo container length */
+    if (array_location + 1 >= this.e.current_photo_cont.children.length) {
+        this.e.photo_location = 1;
+        this.e.current_photo_count.innerHTML = this.e.photo_location;
+    }
+};
+
+ImageViewer.changeImageLeft = function (mouseEvent) {
+    /* Set an initial array location to 0 */
+    /* For each element in the current photo container if the src matches, then set the array location to that location */
+    let array_location = ImageViewer.findCurrentIndex(0);
+
+    /* If the array location - 1 goes past 0 and is not -1 then do arrray_location - 1 to get the previous image
+    * Else go the last image in the current photo container */
+    if (array_location - 1 != -1) {
+        this.e.image_content.src = this.e.current_photo_cont.children[array_location - 1].getAttribute("src");
+    } else {
+        this.e.image_content.src = this.e.current_photo_cont.children[this.e.current_photo_cont.children.length - 1].getAttribute("src");
+    }
+
+    /* If the array location - 1 is not -1 then set the photo location to one down  */
+    if (array_location - 1 != -1) {
+        this.e.photo_location = this.e.photo_location - 1;
+        this.e.current_photo_count.innerHTML = this.e.photo_location;
+    }
+
+    /* if the array location - 1 is -1 then set the photo location the total length in the container */
+    if (array_location - 1 == -1) {
+        this.e.photo_location = this.e.current_photo_cont.children.length;
+        this.e.current_photo_count.innerHTML = this.e.photo_location;
     }
 };
 
@@ -113,8 +119,16 @@ ImageViewer.addListeners = function() {
     this.e.close_btn.addEventListener("click", this.evtCallbacks.closeClicked.bind(this));
 
     document.addEventListener("keydown", function(keyevent) {
-        if(keyevent.keyCode == 27) {
+        if (keyevent.keyCode == 27) {
           this.e.photo_cont.style.display = "none";
+        }
+
+        if (keyevent.keyCode == 37) {
+          ImageViewer.changeImageLeft();
+        }
+
+        if (keyevent.keyCode == 39) {
+          ImageViewer.changeImageRight();
         }
     }.bind(this));
 
