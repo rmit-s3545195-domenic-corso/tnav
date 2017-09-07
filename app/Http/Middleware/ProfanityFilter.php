@@ -24,19 +24,19 @@ class ProfanityFilter
         $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
 	
 	foreach($profanitylist as $profanity) {
-        if(in_array($rr_name, $profanitylist)) {
+        if($rr_name = $profanity) {
             $request->merge(['rr_name' => "*****"]);
         }
 
-        if(in_array($rr_desc, $profanitylist)) {
+        if($rr_desc = $profanity) {
             $request->merge(['rr_desc' => "*****"]);
         }
 
-        if(in_array($rr_added_by, $profanitylist)) {
+        if($rr_added_by = $profanity) {
             $request->merge(['rr_added_by' => "*****"]);
         }
 
-        if(in_array($rr_floor, $profanitylist)) {
+        if($rr_floor = $profanity) {
             $request->merge(['rr_floor' => "*****"]);
         }
 	}
