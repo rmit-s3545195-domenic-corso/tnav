@@ -25,6 +25,7 @@ class ProfanityFilter
 	$profanityList = array_map("trim", $profanityList);
 
 	foreach($request->except('_token') as $k => $v) {
+            if (!is_string($v)) { continue; }
             $modifiedValue = $v;
 	    foreach($profanityList as $p) {
 		if(strpos(strtolower($v), $p) !== false) {
