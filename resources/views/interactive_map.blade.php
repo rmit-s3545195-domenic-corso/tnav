@@ -4,6 +4,7 @@
 
 @section('styles')
     <link href="{{ url('/css/interactive_map.css') }}" rel="stylesheet" />
+    <link href="{{ url('/css/image_viewer.css') }}"  rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -23,6 +24,20 @@
     <div id="map_results_cont">
         <div id="map"></div>
         <div id="results"></div>
+        <!-- Container for the enlarged img -->
+        <div id="photo_cont">
+
+            <div id="caption"></div>
+
+            <img id="rr_image_display" />
+
+            <div id="photo_counter"><span id="current_photo_number"></span> / <span id="total_photo_number"></span></div>
+            <div id='image_view_navigation'>
+                <span id="left" class="btn btn-info glyphicon glyphicon-chevron-left" title="Previous Image"></span>
+                <span id="close" class="btn btn-danger glyphicon glyphicon-remove" title="Close"></span>
+                <span id="right" class="btn btn-info glyphicon glyphicon-chevron-right" title="Next Image"></span>
+            </div>
+        </div>
     </div>
 @endsection
 
@@ -30,4 +45,5 @@
     <script src="{{ url('/js/tnav.location.js') }}"></script>
     <script src="{{ url('/js/interactive_map.js') }}"></script>
     <script src="{{ url('/js/interactive_map.ui.js') }}"></script>
+    <script src="{{ url('/js/image_viewer.js') }}"></script>
 @endsection

@@ -87,6 +87,11 @@
     text-overflow: hidden;
 }
 
+.result_container:hover {
+    background-color: #DCDCDC;
+    cursor: pointer;
+}
+
 .result_header {
     width: 100%;
     padding-bottom: 7px;
@@ -137,4 +142,10 @@
     border-bottom: 7px solid rgba(0, 0, 0, 0);
     float: left;
     margin-right: 5px;
+}
+
+.restroom_img:hover {
+    cursor: pointer;
+    opacity: 0.7;
+    border-radius: 2px;
 }

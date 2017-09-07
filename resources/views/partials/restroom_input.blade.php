@@ -28,6 +28,13 @@
         <label for="rr_added_by">Optional - Your Name</label>
         <input type="text" name="rr_added_by" class="form-control" id="rr_added_by" value="{{ Request::old('rr_added_by') ? Request::old('rr_added_by') : $restroom->addedBy }}" />
     </div>
+    <div class="form-group">
+        <label for="rr_added_by">Optional - Upload Images</label>
+        <div class="alert alert-info">
+            <strong> File Type must be of type: jpg, png | Only 3 files are allowed</strong>
+        </div>
+        <input type="file" name="rr_photos[]" id="rr_photos[]" multiple="multiple" accept=".jpg,.png">
+    </div>
     <div class="form-group" style="text-align: right">
         <button type="submit" class="btn btn-info">Save Changes</button>
     </div>

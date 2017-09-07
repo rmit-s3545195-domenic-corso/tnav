@@ -17,7 +17,8 @@ class Restroom extends Model
             'rr_lat' => 'required|max:50|regex:'.$latLngRegex,
             'rr_lng' => 'required|max:50|regex:'.$latLngRegex,
             'rr_floor' => 'nullable|max:20|regex:'.$textRegex,
-            'rr_added_by' => 'nullable|max:70|min:2|regex:'.$textRegex
+            'rr_added_by' => 'nullable|max:70|min:2|regex:'.$textRegex,
+            'rr_photos.*' => 'mimes:jpg,jpeg,png'
         ];
     }
 }
