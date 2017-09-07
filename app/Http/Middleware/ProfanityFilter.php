@@ -17,12 +17,13 @@ class ProfanityFilter
     */
     public function handle($request, Closure $next) {
 
-        $rr_name = $request->input('rr_name');
-        $rr_desc = $request->input('rr_desc');
-        $rr_added_by = $request->input('rr_added_by');
-        $rr_floor = $request->input('rr_floor');
+        $rr_name = $request->rr_name;
+        $rr_desc = $request->rr_desc;
+        $rr_added_by = $request->rr_added_by;
+        $rr_floor = $request->rr_floor;
         $profanitylist = file('/var/www/html/tnav/storage/profanitylist.txt', FILE_SKIP_EMPTY_LINES);
-
+	
+	foreach($profanitylist as $profanity) {
         if(in_array($rr_name, $profanitylist)) {
             $request->merge(['rr_name' => "*****"]);
         }
@@ -38,6 +39,7 @@ class ProfanityFilter
         if(in_array($rr_floor, $profanitylist)) {
             $request->merge(['rr_floor' => "*****"]);
         }
+	}
 
         return $next($request);
     }
