@@ -30,25 +30,6 @@ class RestroomController extends Controller
         return $restroom;
     }
 
-    private static function hashFileName(string $filename) : string
-    {
-        $hashedFilename = $filename;
-        $hashedFilename = hash('sha256', $hashedFilename);
-        return $hashedFilename;
-    }
-
-    /* Update Restroom Photo attributes, accepts Request and Restroom */
-    private static function assignRestroomPhotoAttributesFromRequest(Request $request, int $array_location, Restroom $restroom, RestroomPhoto $restroom_photo) : RestroomPhoto
-    {
-        /* Hash name for the image */
-        $restroom_photo->name = self::hashFileName($request->rr_photos[$array_location]->getClientOriginalName());
-        $restroom_photo->addedBy = $restroom->addedBy;
-        $restroom_photo->reports = 0;
-        $restroom_photo->path = public_path('/img/').$request->rr_photos[$array_location]->getClientOriginalName();
-        $restroom_photo->restroomID = $restroom->id;
-        return $restroom_photo;
-    }
-
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), Restroom::getValidationRules());
@@ -61,48 +42,33 @@ class RestroomController extends Controller
                 ->withErrors($validator);
         }
 
-        if(count($request->rr_photos) > 3) {
-            Session::flash("flash_filecount", "You may only upload 3 images");
-            return redirect('/add-restroom')
-                ->withInput();
-        }
-
         /* Create a new Restroom */
         $newRestroom = new Restroom();
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
-
+        
+        /* Save the Restroom itself to database */
         $newRestroom->save();
-
-        $path = public_path('/img/'.$newRestroom->id);
-        if (!file_exists($path)) {
-            File::makeDirectory(public_path('/img/'.$newRestroom->id));
-        }
-        if (self::exceedImageLimitInDirectory(count($request->rr_photos), $path, $newRestroom)) {
-            Session::flash("flash_filecount", "Photo Limit for this restroom have been reached");
-            return redirect('/add-restroom')
-                ->withInput();
-        }
+        
+        /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
+        $publicImgDir = "/img/$newRestroom->id";
+        
+        $fullPublicImgDir = public_path($publicImgDir);
+        File::makeDirectory($fullPublicImgDir);
 
         /* Upload the file to the public image path */
-        self::upload($path, $request, $newRestroom);
-
-        /* Check if the number is less than 15 */
-        if (!self::exceedImageLimitInDatabase($newRestroom)) {
-            for ($i = 0; $i < count($request->rr_photos); $i++) {
-                if (self::file_exists_in_database($i, $request)) { continue; } else {
-                    /* Check if the image is already in the database */
-
-                    /* Create a new Restroom Photo if there are images in the request */
-                    $newRestroomPhoto = new RestroomPhoto();
-
-                    /* Assign its attributes from the request */
-                    self::assignRestroomPhotoAttributesFromRequest($request, $i, $newRestroom, $newRestroomPhoto);
-
-                    $newRestroomPhoto->save();
-                }
-            }
+        self::uploadImages($fullPublicImgDir, $request->rr_photos);
+        
+        /* Now the photos are uploaded, make a new database record entry for each photo, associating
+        each record with the newly-created Restroom using the a foreign key */
+        foreach ($request->rr_photos as $p) {
+            $newRestroomPhoto = new RestroomPhoto();
+            
+            /* Assign appropriate attributes for model 'Restroom Photo' */
+            self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $newRestroom->id, $newRestroom->addedBy);
+            
+            $newRestroomPhoto->save();
         }
 
         /* Redirect to restroom list for development, change this later on */
@@ -193,40 +159,20 @@ class RestroomController extends Controller
             ->toJson();
     }
 
-    /* Passes in the request with the uploaded files and stores them in a folder with the restroom id */
-    private function upload(String $path, Request $request, Restroom $curr_restroom)
+    private static function uploadImages(String $prePath, array $photos)
     {
-        if ($request->rr_photos != null) {
-            $rr_photos = $request->rr_photos;
-            foreach($rr_photos as $photo) {
-                if (file_exists($path.'/'.$photo->getClientOriginalName())) {
-                    continue;
-                } else { $photo->move($path, $photo->getClientOriginalName()); }
-            }
+        foreach ($photos as $p) {
+            $p->move($prePath, $p->getClientOriginalName());
         }
     }
 
-    private function file_exists_in_database(int $array_location, Request $request) : bool
-    {
-        if (RestroomPhoto::where('path', '=', public_path('/img/').$request->rr_photos[$array_location]->getClientOriginalName()) != null) {
-            return true;
-        } else { return false; }
-    }
-
-    private function exceedImageLimitInDatabase(Restroom $restroom) : bool
-    {
-        $restroomPhotos = RestroomPhoto::where('restroomID', '=', $restroom->id)->get();
-        if (count($restroomPhotos) > 15) {
-            return true;
-        } else { return false; }
-    }
-
-    private function exceedImageLimitInDirectory(int $uploadedFiles, String $path, Restroom $curr_restroom) : bool
-    {
-        $files = (count(scandir($path)) - 2);
-        if ($files + $uploadedFiles > 15) {
-            return true;
-        } else { return false; }
+    private static function assignRestroomPhotoAttributesFromRequest($actualPhoto, $restroomPhoto, $restroomID, $addedBy)
+    {    
+        $restroomPhoto->name = $actualPhoto->getClientOriginalName();
+        $restroomPhoto->addedBy = $addedBy || 'Anonymous';
+        $restroomPhoto->reports = 0;
+        $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
+        $restroomPhoto->restroom_id = $restroomID;
     }
 
     public function searchByGeoPos(Request $request)
@@ -276,6 +222,17 @@ class RestroomController extends Controller
         /* Convert results array into Eloquent Collection object to easily
         encode to a JSON String on the next line when returning */
         $resultsCollection = new Collection($results);
+        
+        /* Add 'photoUrls' property to each restroom result */
+        foreach ($resultsCollection as $r) {
+            $photoUrls = array();
+            
+            foreach ($r->photos as $p) {
+                $photoUrls[] = $p->path;
+            }
+            
+            $r->photoUrls = $photoUrls;
+        }
 
         /* Return the results as a JSON String */
         return $resultsCollection->toJson();

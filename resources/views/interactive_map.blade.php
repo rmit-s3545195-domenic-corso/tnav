@@ -45,5 +45,6 @@
     <script src="{{ url('/js/tnav.location.js') }}"></script>
     <script src="{{ url('/js/interactive_map.js') }}"></script>
     <script src="{{ url('/js/interactive_map.ui.js') }}"></script>
+    <script src="{{ url('/js/InteractiveMap.Navigation.js') }}"></script>
     <script src="{{ url('/js/image_viewer.js') }}"></script>
 @endsection

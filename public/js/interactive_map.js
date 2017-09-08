@@ -15,12 +15,6 @@ InteractiveMap.evtCallbacks = {
         tnav.location.getPosition(
             /* Success */
             function(geoPos) {
-                geoPos = {
-                    coords: {
-                        latitude: -37.815957621953075,
-                        longitude: 144.96910728836068
-                    }
-                }
                 InteractiveMap.setCenterPos(geoPos);
                 InteractiveMap.setYouAreHere(geoPos);
                 InteractiveMap.fetchRestroomList({

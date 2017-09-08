@@ -3,9 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Restroom extends Model
 {
+    public function photos() : HasMany {
+        return $this->hasMany('App\RestroomPhoto');
+    }
+    
     public static function getValidationRules() : array {
         $textRegex = '/^[\w\s\,\d\']+$/';
         $descRegex = '/^[\w\s\,\d\'!]+$/';
@@ -21,4 +26,10 @@ class Restroom extends Model
             'rr_photos.*' => 'mimes:jpg,jpeg,png'
         ];
     }
+    
+    public static function getPhotoFileName($originalName) {
+        /* Use crc32 hash for shorter name */
+        return hash('crc32', $originalName.rand(0, 1000));
+    }
+    
 }
