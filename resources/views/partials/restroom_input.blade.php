@@ -30,9 +30,6 @@
     </div>
     <div class="form-group">
         <label for="rr_added_by">Optional - Upload Images</label>
-        <div class="alert alert-info">
-            <strong> File Type must be of type: jpg, png | Only 3 files are allowed</strong>
-        </div>
         <input type="file" name="rr_photos[]" id="rr_photos[]" multiple="multiple" accept=".jpg,.png">
     </div>
     <div class="form-group" style="text-align: right">

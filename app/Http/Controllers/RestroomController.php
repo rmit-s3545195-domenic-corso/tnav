@@ -47,29 +47,22 @@ class RestroomController extends Controller
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
-        
+
         /* Save the Restroom itself to database */
         $newRestroom->save();
-        
+
         /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
         $publicImgDir = "/img/$newRestroom->id";
-        
+
         $fullPublicImgDir = public_path($publicImgDir);
         File::makeDirectory($fullPublicImgDir);
 
         /* Upload the file to the public image path */
         self::uploadImages($fullPublicImgDir, $request->rr_photos);
-        
+
         /* Now the photos are uploaded, make a new database record entry for each photo, associating
         each record with the newly-created Restroom using the a foreign key */
-        foreach ($request->rr_photos as $p) {
-            $newRestroomPhoto = new RestroomPhoto();
-            
-            /* Assign appropriate attributes for model 'Restroom Photo' */
-            self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $newRestroom->id, $newRestroom->addedBy);
-            
-            $newRestroomPhoto->save();
-        }
+        self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -90,53 +83,29 @@ class RestroomController extends Controller
                 ->withErrors($validator);
         }
 
-        if(count($request->rr_photos) > 3) {
-            Session::flash("flash_filecount", "You may only upload 3 images at one time");
-            return redirect('/edit/' . $restroom->id)
-                ->withInput();
-        }
-
-        /* Update Restroom attributes */
+        /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
 
-        $path = public_path('/img/'.$restroom->id);
-        if (!file_exists($path)) {
-            File::makeDirectory(public_path('/img/'.$restroom->id));
-        }
+        /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
+        $publicImgDir = "/img/$restroom->id";
 
-        if (self::exceedImageLimitInDirectory(count($request->rr_photos), $path, $restroom)) {
-            Session::flash("flash_filecount", "Photo Limit for this restroom have been reached");
-            return redirect('/edit/' . $restroom->id)
-                ->withInput();
-        }
+        $fullPublicImgDir = public_path($publicImgDir);
 
         /* Upload the file to the public image path */
-        self::upload($path, $request, $restroom);
+        self::uploadImages($fullPublicImgDir, $request->rr_photos);
 
-        /* Check if the number is less than 15 */
-        if (!self::exceedImageLimitInDatabase($restroom)) {
-            for ($i = 0; $i < count($request->rr_photos); $i++) {
-                if (self::file_exists_in_database($i, $request)) { continue; } else {
-                    /* Create a new Restroom Photo if there are images in the request */
-                    $newRestroomPhoto = new RestroomPhoto();
-
-                    /* Assign its attributes from the request */
-                    self::assignRestroomPhotoAttributesFromRequest($request, $i, $restroom, $newRestroomPhoto);
-
-                    $newRestroomPhoto->save();
-                }
-            }
-        }
+        /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
+        associating each record with the newly-created Restroom using the a foreign key */
+        self::uploadImagesToDatabase($restroom, $request->rr_photos);
 
         $restroom->update();
-
 
         return redirect('/restroom-list');
     }
 
     public function delete(Request $request)
     {
-        RestroomPhoto::where('restroomID', '=', $request->id)->delete();
+        RestroomPhoto::where('restroom_id', '=', $request->id)->delete();
         File::deleteDirectory(public_path('/img/'.$request->id));
         Restroom::find($request->id)->delete();
         Session::flash("flash_success", "Restroom has been deleted");
@@ -159,6 +128,30 @@ class RestroomController extends Controller
             ->toJson();
     }
 
+    private static function uploadImagesToDatabase(Restroom $restroom, array $photos)
+    {
+        foreach ($photos as $p) {
+            $currentRestroomImages = RestroomPhoto::where('restroom_id', '=',$restroom->id)->where('name', '=', $p->getClientOriginalName())->get();
+            if($currentRestroomImages->count() != 0) {
+                foreach ($currentRestroomImages as $photos) {
+                    if ($photos->name != $p->getClientOriginalName()) {
+                        $newRestroomPhoto = new RestroomPhoto();
+
+                        self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $restroom->id, $restroom->addedBy);
+
+                        $newRestroomPhoto->save();
+                    } else { continue; }
+                }
+            } else {
+                $newRestroomPhoto = new RestroomPhoto();
+
+                self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $restroom->id, $restroom->addedBy);
+
+                $newRestroomPhoto->save();
+            }
+        }
+    }
+
     private static function uploadImages(String $prePath, array $photos)
     {
         foreach ($photos as $p) {
@@ -167,7 +160,7 @@ class RestroomController extends Controller
     }
 
     private static function assignRestroomPhotoAttributesFromRequest($actualPhoto, $restroomPhoto, $restroomID, $addedBy)
-    {    
+    {
         $restroomPhoto->name = $actualPhoto->getClientOriginalName();
         $restroomPhoto->addedBy = $addedBy || 'Anonymous';
         $restroomPhoto->reports = 0;
@@ -222,15 +215,15 @@ class RestroomController extends Controller
         /* Convert results array into Eloquent Collection object to easily
         encode to a JSON String on the next line when returning */
         $resultsCollection = new Collection($results);
-        
+
         /* Add 'photoUrls' property to each restroom result */
         foreach ($resultsCollection as $r) {
             $photoUrls = array();
-            
+
             foreach ($r->photos as $p) {
                 $photoUrls[] = $p->path;
             }
-            
+
             $r->photoUrls = $photoUrls;
         }
 
