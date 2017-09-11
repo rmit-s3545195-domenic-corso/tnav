@@ -16,6 +16,12 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.25);
 }
 
+.form-control {
+    transition: none !important;
+    -webkit-transition: none !important;
+    border-radius: 0 !important;
+}
+
 html, body {
     margin: 0;
     font-weight: 300;

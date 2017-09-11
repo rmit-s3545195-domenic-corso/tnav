@@ -149,3 +149,8 @@
     opacity: 0.7;
     border-radius: 2px;
 }
+
+.start_nav_btn {
+    float: right;
+    width: auto !important;
+}

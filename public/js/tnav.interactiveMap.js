@@ -1,4 +1,4 @@
-let InteractiveMap = {
+tnav.interactiveMap = {
     map: null,
     youAreHereMarker: null,
     youAreHereInfoWindow: null,
@@ -7,25 +7,25 @@ let InteractiveMap = {
         map: document.getElementById("map"),
         findNearMeBtn: document.getElementById("btn_use_loc")
     },
-    STARTING_ZOOM: 17
+    DESKTOP_ZOOM: 17,
+    MOBILE_ZOOM: 15
 };
 
-InteractiveMap.evtCallbacks = {
+tnav.interactiveMap.evtCallbacks = {
     findNearMe: function() {
         tnav.location.getPosition(
             /* Success */
             function(geoPos) {
-                InteractiveMap.setCenterPos(geoPos);
-                InteractiveMap.setYouAreHere(geoPos);
-                InteractiveMap.fetchRestroomList({
+                tnav.interactiveMap.navigation.endNavigation();
+                tnav.interactiveMap.setCenterPos(geoPos);
+                tnav.interactiveMap.setYouAreHere(geoPos);
+                tnav.interactiveMap.fetchRestroomList({
                     lat: geoPos.coords.latitude,
                     lng: geoPos.coords.longitude
                 });
             },
             /* Failure */
-            function() {
-
-            }
+            function() {}
         );
     },
     /* When the response from the database given a geoPos has responded
@@ -35,43 +35,46 @@ InteractiveMap.evtCallbacks = {
 
         this.ui.addNewResultSet(restroomResults);
         this.newMarkerSet(restroomResults);
+        this.navigation.scrollToMap();
     }
 };
 
-InteractiveMap.hideAllResultMarkers = function() {
+tnav.interactiveMap.hideAllResultMarkers = function() {
     for (let i = 0; i < this.resultsMarkers.length; i++) {
         this.resultsMarkers[i].setMap(null);
     }
 };
 
-InteractiveMap.newResultMarker = function(result) {
+tnav.interactiveMap.newResultMarker = function(result, resultNum) {
     let marker = new google.maps.Marker({
         position: {
             lat: parseFloat(result.lat),
             lng: parseFloat(result.lng)
         },
         map: this.map,
-        label: result.name
-    })
+        label: resultNum.toString()
+    });
+    
+    this.resultsMarkers.push(marker);
 };
 
-InteractiveMap.newMarkerSet = function(results) {
+tnav.interactiveMap.newMarkerSet = function(results) {
     this.hideAllResultMarkers();
     this.resultsMarkers = [];
 
     for (let i = 0; i < results.length; i++) {
-        this.newResultMarker(results[i]);
+        this.newResultMarker(results[i], i + 1);
     }
 };
 
-InteractiveMap.setCenterPos = function(geoPos) {
+tnav.interactiveMap.setCenterPos = function(geoPos) {
     this.map.setCenter({
         lat: geoPos.coords.latitude,
         lng: geoPos.coords.longitude
     });
 };
 
-InteractiveMap.setYouAreHere = function(geoPos) {
+tnav.interactiveMap.setYouAreHere = function(geoPos) {
     this.youAreHereMarker.setPosition({
         lat: geoPos.coords.latitude,
         lng: geoPos.coords.longitude
@@ -82,14 +85,14 @@ InteractiveMap.setYouAreHere = function(geoPos) {
 
 /* Make a request to database to find restrooms around a particular
 latLng location, then fill results and show markers on map */
-InteractiveMap.fetchRestroomList = function(latLng) {
+tnav.interactiveMap.fetchRestroomList = function(latLng) {
     BL.httpGET("/search-query-geo", {
         lat: latLng.lat,
         lng: latLng.lng
     }, this.evtCallbacks.resultsReturned.bind(this));
 };
 
-InteractiveMap.init = function() {
+tnav.interactiveMap.init = function() {
     let mapOptions = {
         zoom: this.STARTING_ZOOM,
         center: tnav.DEFAULT_MAPS_POS,
@@ -115,11 +118,11 @@ InteractiveMap.init = function() {
     });
 
     this.addListeners();
+    this.navigation.init(this.map);
+    this.ui.adjustAll();
 };
 
-InteractiveMap.addListeners = function() {
+tnav.interactiveMap.addListeners = function() {
     this.e.findNearMeBtn.addEventListener("click",
     this.evtCallbacks.findNearMe.bind(this));
 };
-
-InteractiveMap.init();

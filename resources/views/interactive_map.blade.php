@@ -43,8 +43,11 @@
 
 @section('scripts')
     <script src="{{ url('/js/tnav.location.js') }}"></script>
-    <script src="{{ url('/js/interactive_map.js') }}"></script>
-    <script src="{{ url('/js/interactive_map.ui.js') }}"></script>
-    <script src="{{ url('/js/InteractiveMap.Navigation.js') }}"></script>
-    <script src="{{ url('/js/image_viewer.js') }}"></script>
+    <script src="{{ url('/js/tnav.interactiveMap.js') }}"></script>
+    <script src="{{ url('/js/tnav.interactiveMap.ui.js') }}"></script>
+    <script src="{{ url('/js/tnav.interactiveMap.navigation.js') }}"></script>
+    <script src="{{ url('/js/lib/imageViewer.js') }}"></script>
+    <script>
+        tnav.interactiveMap.init();
+    </script>
 @endsection

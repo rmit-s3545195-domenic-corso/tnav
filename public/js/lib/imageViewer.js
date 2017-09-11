@@ -1,4 +1,4 @@
-let ImageViewer = {
+let imageViewer = {
     activeIndex: 0,
     currentPhotoUrls: [],
 
@@ -15,7 +15,7 @@ let ImageViewer = {
     },
 };
 
-ImageViewer.evtCallbacks = {
+imageViewer.evtCallbacks = {
     imageClicked: function(mouseEvent) {
         /* Setting the current photo container to the parent element of clicked target image in an array */
         let photoContainer = mouseEvent.target.parentElement;
@@ -64,12 +64,12 @@ ImageViewer.evtCallbacks = {
     }
 };
 
-ImageViewer.update = function () {
+imageViewer.update = function () {
     this.e.enlargedImageElement.setAttribute("src", this.currentPhotoUrls[this.activeIndex]);
     this.e.currentPhotoNumber.innerHTML = this.activeIndex + 1;
 };
 
-ImageViewer.addListeners = function() {
+imageViewer.addListeners = function() {
     let restroomImages = document.getElementsByClassName('restroom_img');
 
     for (let i = 0; i < restroomImages.length; i++) {
@@ -97,8 +97,8 @@ ImageViewer.addListeners = function() {
     }.bind(this));
 };
 
-ImageViewer.init = function() {
+imageViewer.init = function() {
     this.addListeners();
 };
 
-ImageViewer.init();
+imageViewer.init();

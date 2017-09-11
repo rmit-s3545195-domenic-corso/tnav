@@ -50,19 +50,21 @@ class RestroomController extends Controller
 
         /* Save the Restroom itself to database */
         $newRestroom->save();
+        
+        if (!is_null($request->rr_photos)) {
+            /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
+            $publicImgDir = "/img/$newRestroom->id";
 
-        /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
-        $publicImgDir = "/img/$newRestroom->id";
+            $fullPublicImgDir = public_path($publicImgDir);
+            File::makeDirectory($fullPublicImgDir);
 
-        $fullPublicImgDir = public_path($publicImgDir);
-        File::makeDirectory($fullPublicImgDir);
+            /* Upload the file to the public image path */
+            self::uploadImages($fullPublicImgDir, $request->rr_photos);
 
-        /* Upload the file to the public image path */
-        self::uploadImages($fullPublicImgDir, $request->rr_photos);
-
-        /* Now the photos are uploaded, make a new database record entry for each photo, associating
-        each record with the newly-created Restroom using the a foreign key */
-        self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+            /* Now the photos are uploaded, make a new database record entry for each photo, associating
+            each record with the newly-created Restroom using the a foreign key */
+            self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+        }
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -85,20 +87,22 @@ class RestroomController extends Controller
 
         /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
+        
+        if (!is_null($request->rr_photos)) {
+            /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
+            $publicImgDir = "/img/$restroom->id";
 
-        /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
-        $publicImgDir = "/img/$restroom->id";
+            $fullPublicImgDir = public_path($publicImgDir);
 
-        $fullPublicImgDir = public_path($publicImgDir);
+            /* Upload the file to the public image path */
+            self::uploadImages($fullPublicImgDir, $request->rr_photos);
 
-        /* Upload the file to the public image path */
-        self::uploadImages($fullPublicImgDir, $request->rr_photos);
+            /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
+            associating each record with the newly-created Restroom using the a foreign key */
+            self::uploadImagesToDatabase($restroom, $request->rr_photos);
 
-        /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
-        associating each record with the newly-created Restroom using the a foreign key */
-        self::uploadImagesToDatabase($restroom, $request->rr_photos);
-
-        $restroom->update();
+            $restroom->update();
+        }
 
         return redirect('/restroom-list');
     }

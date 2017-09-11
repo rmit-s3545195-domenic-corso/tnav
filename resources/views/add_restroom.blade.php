@@ -25,5 +25,5 @@
 
 @section('scripts')
     <script src="{{ url('/js/tnav.location.js') }}"></script>
-    <script src="{{ url('/js/restroom_input.js') }}"></script>
+    <script src="{{ url('/js/tnav.restroomInput.js') }}"></script>
 @endsection

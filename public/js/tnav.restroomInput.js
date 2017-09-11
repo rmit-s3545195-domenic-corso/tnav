@@ -1,46 +1,35 @@
-let RestroomInput = {
+tnav.restroomInput = {
     map: null,
     marker: null,
     latInp: document.getElementById("rr_lat"),
     lngInp: document.getElementById("rr_lng"),
-    /* list of elements */
     e: {
         map: document.getElementById("ri_map"),
         useLocBtn: document.getElementById("ri_use_loc_btn")
     },
-    /* a zoom of 18 is close enough to see the streets clearly */
+    /* A zoom of 18 is close enough to see the streets clearly. */
     STARTING_ZOOM: 18
 };
 
-/* always use bind(RestroomInput) when using these */
-RestroomInput.evtCallbacks = {
+/* always use bind(tnav.restroomInput) when using these */
+tnav.restroomInput.evtCallbacks = {
     updateLatLngInput: function() {
         let centerPos = this.map.getCenter();
-
-        /* move the marker to the center of map */
         this.marker.setPosition(centerPos);
 
         this.latInp.value = centerPos.lat();
         this.lngInp.value = centerPos.lng();
     },
     useLocBtnClicked: function() {
-
         let success = function(geoPos) {
-            /* grab lat/lng data from the Geoposition object
-            returned from browser */
-            let lat = geoPos.coords.latitude;
-            let lng = geoPos.coords.longitude;
-
-            /* move the center position of the map to match the
-            lat/lng values returned from browser */
             this.map.setCenter({
-                lat: lat,
-                lng: lng
+                lat: geoPos.coords.latitude,
+                lng: geoPos.coords.longitude
             });
         };
 
         let failure = function() {
-            alert("A request for your location has failed");
+            alert("A request for your location has failed.");
         };
 
         tnav.location.getPosition(success.bind(this),
@@ -48,7 +37,7 @@ RestroomInput.evtCallbacks = {
     }
 };
 
-RestroomInput.init = function(startingLocation) {
+tnav.restroomInput.init = function(startingLocation) {
     /* map options */
     let mapOptions = {
         zoom: this.STARTING_ZOOM,
@@ -63,10 +52,7 @@ RestroomInput.init = function(startingLocation) {
         clickableIcons: false
     };
 
-    /* load the map */
     this.map = new google.maps.Map(this.e.map, mapOptions);
-
-    /* set a marker in the center position */
     this.marker = new google.maps.Marker({
         position: startingLocation,
         map: this.map
@@ -76,8 +62,7 @@ RestroomInput.init = function(startingLocation) {
     this.checkForOldLatLng();
 };
 
-RestroomInput.addListeners = function() {
-    /* when the center position of the map is changed */
+tnav.restroomInput.addListeners = function() {
     this.map.addListener("center_changed",
         this.evtCallbacks.updateLatLngInput.bind(this));
 
@@ -85,10 +70,7 @@ RestroomInput.addListeners = function() {
         this.evtCallbacks.useLocBtnClicked.bind(this));
 };
 
-/* if the user has been redirected back to the page and
-is provided with lat/lng data as part of the <input> field,
-move the map to that position immediately */
-RestroomInput.checkForOldLatLng = function() {
+tnav.restroomInput.checkForOldLatLng = function() {
     if (this.latInp.value && this.lngInp.value) {
         this.map.setCenter({
             lat: parseFloat(this.latInp.value),
@@ -97,8 +79,7 @@ RestroomInput.checkForOldLatLng = function() {
     }
 };
 
-/* object literal to be replaced by actual user location */
-RestroomInput.init({
+tnav.restroomInput.init({
     lat: -37.816,
     lng: 144.969
 });

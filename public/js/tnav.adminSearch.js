@@ -1,11 +1,11 @@
-let SearchRestrooms = {
+tnav.adminSearch = {
     e: {
       searchInp: document.getElementById("search_input"),
       resultsCont: document.getElementById("results_cont")
     }
 };
 
-SearchRestrooms.evtCallbacks = {
+tnav.adminSearch.evtCallbacks = {
     inputChanged: function() {
     	this.clearResults();
 
@@ -19,21 +19,21 @@ SearchRestrooms.evtCallbacks = {
     }
 };
 
-SearchRestrooms.init = function() {
+tnav.adminSearch.init = function() {
     this.addListeners();
 };
 
-SearchRestrooms.addListeners = function() {
+tnav.adminSearch.addListeners = function() {
     this.e.searchInp.addEventListener("input", this.evtCallbacks.inputChanged.bind(this));
 };
 
-SearchRestrooms.clearResults = function() {
+tnav.adminSearch.clearResults = function() {
 	while (this.e.resultsCont.firstChild) {
 		this.e.resultsCont.removeChild(this.e.resultsCont.firstChild);
 	}
 };
 
-SearchRestrooms.generateResultElement = function(restroom) {
+tnav.adminSearch.generateResultElement = function(restroom) {
 	/* Create the DIVs for the containers */
 	let mainContDIV = document.createElement("div");
 	let nameHeading = document.createElement("a");
@@ -55,4 +55,4 @@ SearchRestrooms.generateResultElement = function(restroom) {
 	return mainContDIV;
 };
 
-SearchRestrooms.init();
+tnav.adminSearch.init();

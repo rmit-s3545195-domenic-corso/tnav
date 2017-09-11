@@ -1,4 +1,4 @@
-InteractiveMap.ui = {
+tnav.interactiveMap.ui = {
 	e: {
 		mapResultsCont: document.getElementById("map_results_cont"),
 		map: document.getElementById("map"),
@@ -11,16 +11,24 @@ InteractiveMap.ui = {
 	}
 };
 
-InteractiveMap.ui.adjustAll = function() {
+tnav.interactiveMap.ui.adjustAll = function() {
 	if (tnav.isMobile()) {
 		this.adjustMapResultsContMobile();
+        if (tnav.interactiveMap.map) {
+            tnav.interactiveMap.map.setZoom(tnav.interactiveMap.MOBILE_ZOOM);
+        }
 		return;
 	}
+    else {
+        if (tnav.interactiveMap.map) {
+            tnav.interactiveMap.map.setZoom(tnav.interactiveMap.DESKTOP_ZOOM);
+        }
+    }
 
 	this.adjustMapResultsContDesktop();
 };
 
-InteractiveMap.ui.adjustMapResultsContDesktop = function() {
+tnav.interactiveMap.ui.adjustMapResultsContDesktop = function() {
 	let offsetTop = this.e.mapResultsCont.offsetTop;
 	let windowHeight = window.innerHeight;
 	let calculatedHeight = windowHeight - offsetTop;
@@ -28,11 +36,11 @@ InteractiveMap.ui.adjustMapResultsContDesktop = function() {
 	this.e.mapResultsCont.style.height = calculatedHeight + "px";
 };
 
-InteractiveMap.ui.adjustMapResultsContMobile = function() {
+tnav.interactiveMap.ui.adjustMapResultsContMobile = function() {
 	this.e.mapResultsCont.style.height = "400px";
 };
 
-InteractiveMap.ui.generateResultCont = function(result) {
+tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	/* Make DIVs */
 	let containerDIV = document.createElement("div");
 	let headerDIV = document.createElement("div");
@@ -41,6 +49,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 	let tagsContDIV = document.createElement("div");
 	let descDIV = document.createElement("div");
 	let photosContDIV = document.createElement("div");
+    let startNavigationDIV = document.createElement("div");
 
 	/* Options for containerDIV */
 	containerDIV.className = "result_container";
@@ -50,7 +59,7 @@ InteractiveMap.ui.generateResultCont = function(result) {
 
 	/* Options for nameDIV */
 	nameDIV.className = "result_rr_name";
-	nameDIV.appendChild(document.createTextNode(result.name));
+	nameDIV.appendChild(document.createTextNode(resultNum + ". " + result.name));
 
 	/* Options for starsContDIV */
 	starsContDIV.className = "result_stars_cont";
@@ -97,6 +106,21 @@ InteractiveMap.ui.generateResultCont = function(result) {
             photosContDIV.appendChild(photoImg);
         }
     }
+    
+    /* Options for startNavigationDIV */
+    startNavigationDIV.className = "result_start_nav_div";
+    
+    let startNavButton = document.createElement("button");
+    startNavButton.className = "btn btn-primary start_nav_btn";
+    startNavButton.appendChild(document.createTextNode("Navigate"));
+    startNavButton.addEventListener("click", function() {
+        tnav.interactiveMap.navigation.startNavigation(new google.maps.LatLng(
+            result.lat,
+            result.lng
+        ));
+    });
+    
+    startNavigationDIV.appendChild(startNavButton);
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -105,14 +129,16 @@ InteractiveMap.ui.generateResultCont = function(result) {
 	containerDIV.appendChild(tagsContDIV);
 	containerDIV.appendChild(descDIV);
 	containerDIV.appendChild(photosContDIV);
+    containerDIV.appendChild(startNavigationDIV);
+    
 	return containerDIV;
 };
 
-InteractiveMap.ui.addResultCont = function(resultCont) {
+tnav.interactiveMap.ui.addResultCont = function(resultCont) {
 	this.e.results.appendChild(resultCont);
 };
 
-InteractiveMap.ui.clearResults = function() {
+tnav.interactiveMap.ui.clearResults = function() {
     while (this.e.results.firstChild) {
         this.e.results.removeChild(this.e.results.firstChild);
     }
@@ -120,25 +146,25 @@ InteractiveMap.ui.clearResults = function() {
 
 /* Accepts an array of results (restrooms) and updates the panel to include them
 in the results */
-InteractiveMap.ui.addNewResultSet = function(results) {
+tnav.interactiveMap.ui.addNewResultSet = function(results) {
     this.clearResults();
 
     let resultCont;
     for (let i = 0; i < results.length; i++) {
-        resultCont = this.generateResultCont(results[i]);
+        resultCont = this.generateResultCont(results[i], i + 1);
         this.addResultCont(resultCont);
     }
     
-    ImageViewer.addListeners();
+    imageViewer.addListeners();
 };
 
-InteractiveMap.ui.init = function() {
+tnav.interactiveMap.ui.init = function() {
 	this.adjustAll();
 	this.addListeners();
 };
 
-InteractiveMap.ui.addListeners = function() {
+tnav.interactiveMap.ui.addListeners = function() {
 	window.addEventListener("resize", this.evtCallbacks.windowResized.bind(this));
 };
 
-InteractiveMap.ui.init();
+tnav.interactiveMap.ui.init();

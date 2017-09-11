@@ -18,5 +18,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ url('/js/admin_search.js') }}"> </script>
+    <script src="{{ url('/js/tnav.adminSearch.js') }}"> </script>
 @endsection
