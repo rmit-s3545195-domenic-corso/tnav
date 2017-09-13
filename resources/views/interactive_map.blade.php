@@ -15,7 +15,7 @@
         </button>
         <strong id="static_or_text">OR</strong>
         <input type="text" id="inp_search" placeholder="Enter keywords" />
-        <button class="btn btn-default" id="btn_search" type="button">
+        <button class="btn btn-default" id="btn_search" type="button" onclick="returnAddress();">
         Search
         </button>
     </div>
@@ -46,6 +46,7 @@
     <script src="{{ url('/js/tnav.interactiveMap.js') }}"></script>
     <script src="{{ url('/js/tnav.interactiveMap.ui.js') }}"></script>
     <script src="{{ url('/js/tnav.interactiveMap.navigation.js') }}"></script>
+    <script src="{{ url('/js/tnav.locationSearch.js') }}"></script>
     <script src="{{ url('/js/lib/imageViewer.js') }}"></script>
     <script>
         tnav.interactiveMap.init();
