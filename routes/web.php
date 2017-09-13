@@ -52,9 +52,15 @@ Route::get('/add-restroom', function () {
 /* Process 'Add Restroom' attempt */
 Route::post('/add-restroom', 'RestroomController@add');
 
+/* Query the database and return JSON result (AJAX) */
+Route::get('get-restroom-reviews/{restroom}', 'RestroomController@getReviews');
+
 /* Query the database by Geolocation and return list (JSON array) of nearby
 restrooms */
 Route::get('search-query-geo', 'RestroomController@searchByGeoPos');
+
+/* Process 'Add Review' attempt */
+Route::get('add-review', 'ReviewController@add');
 
 /* *ADMIN* Log out the admin */
 Route::get('/admin-logout', function () {

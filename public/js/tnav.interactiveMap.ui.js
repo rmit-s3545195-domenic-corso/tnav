@@ -40,6 +40,25 @@ tnav.interactiveMap.ui.adjustMapResultsContMobile = function() {
 	this.e.mapResultsCont.style.height = "400px";
 };
 
+tnav.interactiveMap.ui.getStarsHTML = function(n) {
+    if (n == undefined) n = 0;
+    
+    let html = "";
+    
+    let fullStars = 0 || n;
+    let emptyStars = 5 - n;
+    
+    for (let i = 0; i < fullStars; i++) {
+        html += "<span class='glyphicon glyphicon-star'></span>";
+    }
+    
+    for (let i = 0; i < emptyStars; i++) {
+        html += "<span class='glyphicon glyphicon-star-empty'></span>";
+    }
+    
+    return html;
+};
+
 tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	/* Make DIVs */
 	let containerDIV = document.createElement("div");
@@ -63,22 +82,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 
 	/* Options for starsContDIV */
 	starsContDIV.className = "result_stars_cont";
-	let fullStars = 0 | result.rating;
-	let emptyStars = 5 - fullStars;
-
-	/* Add full stars */
-	for (let i = 0; i < fullStars; i++) {
-		let star = document.createElement("span");
-		star.className = "glyphicon glyphicon-star";
-		starsContDIV.appendChild(star);
-	}
-
-	/* Add empty stars */
-	for (let i = 0; i < emptyStars; i++) {
-		let star = document.createElement("span");
-		star.className = "glyphicon glyphicon-star-empty";
-		starsContDIV.appendChild(star);
-	}
+	starsContDIV.innerHTML = this.getStarsHTML(result.stars);
 
     if (result.tagUrls) {
     	/* Options for tags */
@@ -92,7 +96,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
     }
 	/* Options for descDIV */
 	descDIV.className = "result_desc";
-	descDIV.appendChild(document.createTextNode(result.description));
+	descDIV.appendChild(document.createTextNode(result.description || ""));
 
 	/* Options for photosContDIV */
 	photosContDIV.className = "result_photos_cont";
@@ -120,7 +124,15 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
         ));
     });
     
+    let reviewsButton = document.createElement("button");
+    reviewsButton.className = "btn btn-default reviews_btn";
+    reviewsButton.appendChild(document.createTextNode("Reviews"));
+    reviewsButton.addEventListener("click", function() {
+        tnav.interactiveMap.reviews.showWithRestroom(result);
+    });
+    
     startNavigationDIV.appendChild(startNavButton);
+    startNavigationDIV.appendChild(reviewsButton);
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -139,8 +151,10 @@ tnav.interactiveMap.ui.addResultCont = function(resultCont) {
 };
 
 tnav.interactiveMap.ui.clearResults = function() {
-    while (this.e.results.firstChild) {
-        this.e.results.removeChild(this.e.results.firstChild);
+    let results = this.e.results.querySelectorAll(".result_container");
+    
+    for (let i = 0; i < results.length; i++) {
+        this.e.results.removeChild(results[i]);
     }
 };
 

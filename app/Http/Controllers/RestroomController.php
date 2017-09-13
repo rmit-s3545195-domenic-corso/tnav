@@ -171,6 +171,10 @@ class RestroomController extends Controller
         $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
         $restroomPhoto->restroom_id = $restroomID;
     }
+    
+    public function getReviews(Restroom $restroom) {
+        dd($restroom);
+    }
 
     public function searchByGeoPos(Request $request)
     {
@@ -229,6 +233,21 @@ class RestroomController extends Controller
             }
 
             $r->photoUrls = $photoUrls;
+            $r->reviews = $r->reviews;
+            
+            $stars = 0;
+            $c = 0;
+            foreach ($r->reviews as $rev) {
+                $stars += $rev->stars;
+                $c++;
+            }
+            
+            if ($stars == 0 || $c == 0) {
+                $r->stars = 0;
+            }
+            else {
+                $r->stars = floor($stars / $c);
+            }
         }
 
         /* Return the results as a JSON String */

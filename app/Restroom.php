@@ -11,6 +11,10 @@ class Restroom extends Model
         return $this->hasMany('App\RestroomPhoto');
     }
     
+    public function reviews() : HasMany {
+        return $this->hasMany('App\Review');
+    }
+    
     public static function getValidationRules() : array {
         $textRegex = '/^[\*\w\s\,\d\']+$/';
         $descRegex = '/^[\*\w\s\,\d\'!]+$/';
