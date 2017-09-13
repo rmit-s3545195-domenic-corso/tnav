@@ -48,10 +48,11 @@ class RestroomController extends Controller
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
 
-        /* Save the Restroom itself to database */
-        $newRestroom->save();
-        
-        if (!is_null($request->rr_photos)) {
+        if (!is_null($request->rr_photos) && self::isCorrectFileExtension($request->rr_photos)) {
+
+            /* Save the Restroom itself to database */
+            $newRestroom->save();
+
             /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
             $publicImgDir = "/img/$newRestroom->id";
 
@@ -64,6 +65,9 @@ class RestroomController extends Controller
             /* Now the photos are uploaded, make a new database record entry for each photo, associating
             each record with the newly-created Restroom using the a foreign key */
             self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+        } else {
+            Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+            return redirect('/add-restroom')->withInput();
         }
 
         /* Redirect to restroom list for development, change this later on */
@@ -87,8 +91,8 @@ class RestroomController extends Controller
 
         /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
-        
-        if (!is_null($request->rr_photos)) {
+
+        if (!is_null($request->rr_photos) && self::isCorrectFileExtension($request->rr_photos)) {
             /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
             $publicImgDir = "/img/$restroom->id";
 
@@ -102,6 +106,9 @@ class RestroomController extends Controller
             self::uploadImagesToDatabase($restroom, $request->rr_photos);
 
             $restroom->update();
+        } else {
+            Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+            return redirect('/edit-restroom')->withInput();
         }
 
         return redirect('/restroom-list');
@@ -171,7 +178,16 @@ class RestroomController extends Controller
         $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
         $restroomPhoto->restroom_id = $restroomID;
     }
-    
+
+    public function isCorrectFileExtension(array $photos) : bool {
+        foreach ($photos as $p) {
+            if (!in_array($p->getClientMimeType(), self::FILETYPES))
+            {
+                return false;
+            } else { return true; }
+        }
+    }
+
     public function getReviews(Restroom $restroom) {
         dd($restroom);
     }
@@ -234,14 +250,14 @@ class RestroomController extends Controller
 
             $r->photoUrls = $photoUrls;
             $r->reviews = $r->reviews;
-            
+
             $stars = 0;
             $c = 0;
             foreach ($r->reviews as $rev) {
                 $stars += $rev->stars;
                 $c++;
             }
-            
+
             if ($stars == 0 || $c == 0) {
                 $r->stars = 0;
             }
