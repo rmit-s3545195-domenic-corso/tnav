@@ -102,7 +102,7 @@ Route::get('/delete-restroom/{id}', 'RestroomController@delete');
 Route::get('/edit/{id}', function (Request $request) {
     if (Session::has('admin')) {
         $restroom = Restroom::find($request->id);
-        return view('edit_restroom')->with('restroom', $restroom);
+        return view('edit_restroom')->with('restroom', $restroom)->with('tags',Tag::all());
     } else {
         Session::flash('flash_not_admin', "Unauthorised: Must be an Administrator to edit a restroom");
         return redirect('/');

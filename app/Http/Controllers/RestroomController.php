@@ -15,7 +15,7 @@ use Session;
 
 class RestroomController extends Controller
 {
-    const FILETYPES = array('image/png', 'image/jpeg', 'image/jpg');
+    const FILETYPES = array('png', 'jpeg', 'jpg');
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -48,7 +48,31 @@ class RestroomController extends Controller
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
-        $newRestroom->save();
+
+        if (!is_null($request->rr_photos)) {
+            if (self::isCorrectFileExtension($request->rr_photos)) {
+                $newRestroom->save();
+
+                /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
+                $publicImgDir = "/img/$newRestroom->id";
+
+                $fullPublicImgDir = public_path($publicImgDir);
+                File::makeDirectory($fullPublicImgDir);
+
+                /* Upload the file to the public image path */
+                self::uploadImages($fullPublicImgDir, $request->rr_photos);
+
+                /* Now the photos are uploaded, make a new database record entry for each photo, associating
+                each record with the newly-created Restroom using the a foreign key */
+                self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+            } else {
+                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+                return redirect('/add-restroom')->withInput();
+            }
+        } else {
+            $newRestroom->save();
+        }
+
         foreach ($request->all() as $k => $v) {
             if (!is_string($k)) { continue; }
 
@@ -65,23 +89,7 @@ class RestroomController extends Controller
             }
         }
 
-        if (!is_null($request->rr_photos) && self::isCorrectFileExtension($request->rr_photos)) {
-            /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
-            $publicImgDir = "/img/$newRestroom->id";
 
-            $fullPublicImgDir = public_path($publicImgDir);
-            File::makeDirectory($fullPublicImgDir);
-
-            /* Upload the file to the public image path */
-            self::uploadImages($fullPublicImgDir, $request->rr_photos);
-
-            /* Now the photos are uploaded, make a new database record entry for each photo, associating
-            each record with the newly-created Restroom using the a foreign key */
-            self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
-        } else {
-            Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
-            return redirect('/add-restroom')->withInput();
-        }
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -105,23 +113,27 @@ class RestroomController extends Controller
         /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
 
-        if (!is_null($request->rr_photos) && self::isCorrectFileExtension($request->rr_photos)) {
-            /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
-            $publicImgDir = "/img/$restroom->id";
+        if (!is_null($request->rr_photos)) {
+            if (self::isCorrectFileExtension($request->rr_photos)) {
+                /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
+                $publicImgDir = "/img/$restroom->id";
 
-            $fullPublicImgDir = public_path($publicImgDir);
+                $fullPublicImgDir = public_path($publicImgDir);
 
-            /* Upload the file to the public image path */
-            self::uploadImages($fullPublicImgDir, $request->rr_photos);
+                /* Upload the file to the public image path */
+                self::uploadImages($fullPublicImgDir, $request->rr_photos);
 
-            /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
-            associating each record with the newly-created Restroom using the a foreign key */
-            self::uploadImagesToDatabase($restroom, $request->rr_photos);
+                /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
+                associating each record with the newly-created Restroom using the a foreign key */
+                self::uploadImagesToDatabase($restroom, $request->rr_photos);
 
-            $restroom->update();
+                $restroom->update();
+            } else {
+                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+                return redirect('/edit-restroom')->withInput();
+            }
         } else {
-            Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
-            return redirect('/edit-restroom')->withInput();
+            $restroom->update();
         }
 
         return redirect('/restroom-list');
@@ -194,11 +206,14 @@ class RestroomController extends Controller
 
     public function isCorrectFileExtension(array $photos) : bool {
         foreach ($photos as $p) {
-            if (!in_array($p->getClientMimeType(), self::FILETYPES))
+            $ext = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
+            /* For each photo check if the extension is in the array */
+            if (!in_array($ext, self::FILETYPES))
             {
                 return false;
-            } else { return true; }
+            }
         }
+        return true;
     }
 
     public function getReviews(Restroom $restroom) {

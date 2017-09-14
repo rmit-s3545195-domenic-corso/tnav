@@ -13,15 +13,18 @@
     overflow: auto;
     width: 100%;
     height: 100%;
-    animation: zoom 1s;
+    animation-name: zoom;
+    animation-duration: 1s;
 }
 
 /* Zoom Animation for the container upon click */
 @keyframes zoom {
     from {
-        transform: scale(0);
+        opacity: 0;
+        transform: rotateX(90deg);
     } to {
-        transform: scale(1);
+        opacity: 1;
+        transform: rotateX(0deg);
     }
 }
 

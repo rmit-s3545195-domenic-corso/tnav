@@ -9,6 +9,22 @@
     display: none;
     overflow-y: auto;
     overflow-x: hidden;
+    animation-name: showReviews;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    transform-origin: top center;
+}
+
+@keyframes showReviews {
+    0% {
+        opacity: 0;
+        transform: rotateX(90deg);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateX(0deg);
+    }
+
 }
 
 #reviews_cont_controls { text-align: right; }

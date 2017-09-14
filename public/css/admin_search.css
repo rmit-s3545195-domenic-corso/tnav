@@ -10,11 +10,23 @@
 .search_result {
     padding: 10px;
     border-bottom: 2px solid #DDD;
+    animation-name: showResults;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+}
+
+/* Zoom Animation for the container upon click */
+@keyframes showResults {
+    from {
+        transform: rotateX(90deg);
+    } to {
+        transform: rotateX(0deg);
+    }
 }
 
 .search_result:last-of-type {
     border-bottom: none;
-    
+
 }
 
 .search_result .rr_title {
