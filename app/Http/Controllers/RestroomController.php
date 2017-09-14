@@ -234,20 +234,7 @@ class RestroomController extends Controller
 
             $r->photoUrls = $photoUrls;
             $r->reviews = $r->reviews;
-            
-            $stars = 0;
-            $c = 0;
-            foreach ($r->reviews as $rev) {
-                $stars += $rev->stars;
-                $c++;
-            }
-            
-            if ($stars == 0 || $c == 0) {
-                $r->stars = 0;
-            }
-            else {
-                $r->stars = floor($stars / $c);
-            }
+            $r->stars = $r->stars();
         }
 
         /* Return the results as a JSON String */
