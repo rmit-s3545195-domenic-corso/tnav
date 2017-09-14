@@ -9,6 +9,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Validator;
 use App\Restroom;
 use App\RestroomPhoto;
+use App\RestroomTag;
 use Storage;
 use Session;
 
@@ -47,12 +48,24 @@ class RestroomController extends Controller
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
+        $newRestroom->save();
+        foreach ($request->all() as $k => $v) {
+            if (!is_string($k)) { continue; }
+
+            if (strpos($k, 'rr_tag_') !== false) {
+                $tagID = str_replace("rr_tag_", "", $k);
+
+                $pivotLink = new RestroomTag();
+
+                $pivotLink->restroom_id = $newRestroom->id;
+                $pivotLink->tag_id = $tagID;
+                $pivotLink->timestamps = false;
+
+                $pivotLink->save();
+            }
+        }
 
         if (!is_null($request->rr_photos) && self::isCorrectFileExtension($request->rr_photos)) {
-
-            /* Save the Restroom itself to database */
-            $newRestroom->save();
-
             /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
             $publicImgDir = "/img/$newRestroom->id";
 
@@ -243,14 +256,19 @@ class RestroomController extends Controller
         /* Add 'photoUrls' property to each restroom result */
         foreach ($resultsCollection as $r) {
             $photoUrls = array();
+            $tagUrls = array();
 
             foreach ($r->photos as $p) {
                 $photoUrls[] = $p->path;
             }
 
-            $r->photoUrls = $photoUrls;
-            $r->reviews = $r->reviews;
+            foreach ($r->tags as $t) {
+                $tagUrls[] = $t->iconPath;
+            }
 
+            $r->photoUrls = $photoUrls;
+            $r->tagUrls = $tagUrls;
+            $r->reviews = $r->reviews;
             $r->stars = $r->stars();
         }
 

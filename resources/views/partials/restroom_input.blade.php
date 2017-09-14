@@ -23,8 +23,8 @@
         <div id="ri_map"></div>
     </div>
     <!-- these inputs should be hidden in production -->
-    <input type="text" name="rr_lat" class="form-control" style="display: block" id="rr_lat" value="{{ Request::old('rr_lat') ? Request::old('rr_lat') : $restroom->lat }}" required />
-    <input type="text" name="rr_lng" class="form-control" style="display: block" id="rr_lng" value="{{ Request::old('rr_lng') ? Request::old('rr_lng') : $restroom->lng }}" required />
+    <input type="text" name="rr_lat" class="form-control" style="display: none" id="rr_lat" value="{{ Request::old('rr_lat') ? Request::old('rr_lat') : $restroom->lat }}" required />
+    <input type="text" name="rr_lng" class="form-control" style="display: none" id="rr_lng" value="{{ Request::old('rr_lng') ? Request::old('rr_lng') : $restroom->lng }}" required />
     <div class="form-group">
         <label for="rr_floor">Optional - Floor Number</label>
         <input type="text" name="rr_floor" class="form-control" id="rr_floor" value="{{ Request::old('rr_floor') ? Request::old('rr_floor') : $restroom->floor }}" />
@@ -32,6 +32,13 @@
     <div class="form-group">
         <label for="rr_added_by">Optional - Your Name</label>
         <input type="text" name="rr_added_by" class="form-control" id="rr_added_by" value="{{ Request::old('rr_added_by') ? Request::old('rr_added_by') : $restroom->addedBy }}" />
+    </div>
+    <div class="form-group">
+        <label for="tags">Tags</label>
+        <br />
+        @foreach($tags as $t)
+            <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" /> {{$t->name}}
+        @endforeach
     </div>
     <div class="form-group">
         <label for="rr_added_by">Optional - Upload Images</label>

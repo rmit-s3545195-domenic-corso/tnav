@@ -4,4 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RestroomPhoto extends Model {}
+class Tag extends Model
+{
+
+}

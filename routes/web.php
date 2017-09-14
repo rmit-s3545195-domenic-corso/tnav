@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 
 use App\Restroom;
+use App\Tag;
 use App\Http\Controllers\AdminController;
 
 /*
@@ -23,6 +24,14 @@ Route::get('restroom-list', function() {
 
 Route::get('hash-admin-pwd', function(Request $request) {
     return AdminController::hashPassword($request->p);
+});
+
+Route::get('list-tags', function() {
+    return dd(Tag::all());
+});
+
+Route::get('tags-for-restroom/{restroom}', function(Restroom $restroom) {
+    return $restroom->tags;
 });
 
 /* Google Maps API Forward */
@@ -46,7 +55,10 @@ Route::post('/admin-login', 'AdminController@login');
 
 /* Show 'Add Restroom' form */
 Route::get('/add-restroom', function () {
-    return view('add_restroom', ['restroom' => new Restroom()]);
+    return view('add_restroom', [
+        'restroom' => new Restroom(),
+        'tags' => Tag::all()
+    ]);
 });
 
 /* Process 'Add Restroom' attempt */

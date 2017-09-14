@@ -14,23 +14,27 @@ class Restroom extends Model
     public function reviews() : HasMany {
         return $this->hasMany('App\Review');
     }
-    
+
+    public function tags() {
+        return $this->belongsToMany(Tag::class);
+    }
+
     public function stars() : int {
         $starsTotal = 0;
         $count = 0;
-        
+
         foreach ($this->reviews as $r) {
             $starsTotal += $r->stars;
             $count++;
         }
-        
+
         if ($starsTotal == 0 || $count == 0) {
             return 0;
         }
-        
+
         return round($starsTotal / $count);
     }
-    
+
     public static function getValidationRules() : array {
         $textRegex = '/^[\*\w\s\,\d\']+$/';
         $descRegex = '/^[\*\w\s\,\d\'!]+$/';
