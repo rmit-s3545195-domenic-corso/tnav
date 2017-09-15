@@ -4,6 +4,11 @@
             <strong>{{ Session::get('invalid_filetype') }}</strong>
         </div>
     @endif
+    @if (Session::has("invalid_filelimit"))
+        <div class="alert alert-danger">
+            <strong>{{ Session::get('invalid_filelimit') }}</strong>
+        </div>
+    @endif
     <div class="form-group">
         <label for="rr_name">Name</label>
         <input type="text" name="rr_name" class="form-control" id="rr_name" value="{{ Request::old('rr_name') ? Request::old('rr_name') : $restroom->name }}" required />

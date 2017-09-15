@@ -16,6 +16,8 @@ use Session;
 class RestroomController extends Controller
 {
     const FILETYPES = array('png', 'jpeg', 'jpg');
+    const MAX_UPLOAD_NUM = 20;
+    const MAX_UPLOAD_FILESIZE = 20480;
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -50,6 +52,22 @@ class RestroomController extends Controller
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
 
         if (!is_null($request->rr_photos)) {
+            /* Checking if the image array is greater than the file upload limit */
+            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
+                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
+                return redirect('/add-restroom')->withInput();
+            }
+
+            /* Check File size of each photo passed in
+               Conversion from Bytes to KB */
+            foreach ($request->rr_photos as $p) {
+              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
+              if ($p->getError() > 0) {
+                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
+                  return redirect('/add-restroom')->withInput();
+              }
+            }
+
             if (self::isCorrectFileExtension($request->rr_photos)) {
                 $newRestroom->save();
 
@@ -114,6 +132,22 @@ class RestroomController extends Controller
         self::assignRestroomAttributesFromRequest($request, $restroom);
 
         if (!is_null($request->rr_photos)) {
+            /* Checking if the image array is greater than the file upload limit */
+            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
+                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
+                return redirect('/edit/' . $restroom->id)->withInput();
+            }
+
+            /* Check File size of each photo passed in
+               Conversion from Bytes to KB */
+            foreach ($request->rr_photos as $p) {
+              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
+              if ($p->getError() > 0) {
+                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
+                  return redirect('/edit/' . $restroom->id)->withInput();
+              }
+            }
+            
             if (self::isCorrectFileExtension($request->rr_photos)) {
                 /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
                 $publicImgDir = "/img/$restroom->id";
