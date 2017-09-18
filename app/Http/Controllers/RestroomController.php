@@ -15,9 +15,9 @@ use Session;
 
 class RestroomController extends Controller
 {
-    const FILETYPES = array('png', 'jpeg', 'jpg');
+    const VALID_FILETYPES = array('png', 'jpeg', 'jpg');
     const MAX_UPLOAD_NUM = 20;
-    const MAX_UPLOAD_FILESIZE = 20480;
+    const MAX_UPLOAD_FILESIZE = 20480 * 1024;
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -50,45 +50,20 @@ class RestroomController extends Controller
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
-
+        
+        /* If photos were uploaded, attempt to save them to the disk */
         if (!is_null($request->rr_photos)) {
-            /* Checking if the image array is greater than the file upload limit */
-            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
-                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
-                return redirect('/add-restroom')->withInput();
+            if (!self::uploadPhotos($request, $newRestroom)) {
+                return redirect('/add-restroom')
+                    ->withInput();
             }
-
-            /* Check File size of each photo passed in
-               Conversion from Bytes to KB */
-            foreach ($request->rr_photos as $p) {
-              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
-              if ($p->getError() > 0) {
-                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
-                  return redirect('/add-restroom')->withInput();
-              }
-            }
-
-            if (self::isCorrectFileExtension($request->rr_photos)) {
-                $newRestroom->save();
-
-                /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
-                $publicImgDir = "/img/$newRestroom->id";
-
-                $fullPublicImgDir = public_path($publicImgDir);
-                File::makeDirectory($fullPublicImgDir);
-
-                /* Upload the file to the public image path */
-                self::uploadImages($fullPublicImgDir, $request->rr_photos);
-
-                /* Now the photos are uploaded, make a new database record entry for each photo, associating
-                each record with the newly-created Restroom using the a foreign key */
-                self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
-            } else {
-                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
-                return redirect('/add-restroom')->withInput();
-            }
-        } else {
-            $newRestroom->save();
+        }
+        
+        $newRestroom->save();
+        
+        /* If photos were uploaded, save them to the database */
+        if (!is_null($request->rr_photos)) {
+            self::savePhotosToDatabase($request, $newRestroom);
         }
 
         foreach ($request->all() as $k => $v) {
@@ -106,8 +81,6 @@ class RestroomController extends Controller
                 $pivotLink->save();
             }
         }
-
-
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -197,57 +170,80 @@ class RestroomController extends Controller
             ->get()
             ->toJson();
     }
-
-    private static function uploadImagesToDatabase(Restroom $restroom, array $photos)
-    {
-        foreach ($photos as $p) {
-            $currentRestroomImages = RestroomPhoto::where('restroom_id', '=',$restroom->id)->where('name', '=', $p->getClientOriginalName())->get();
-            if($currentRestroomImages->count() != 0) {
-                foreach ($currentRestroomImages as $photos) {
-                    if ($photos->name != $p->getClientOriginalName()) {
-                        $newRestroomPhoto = new RestroomPhoto();
-
-                        self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $restroom->id, $restroom->addedBy);
-
-                        $newRestroomPhoto->save();
-                    } else { continue; }
-                }
-            } else {
-                $newRestroomPhoto = new RestroomPhoto();
-
-                self::assignRestroomPhotoAttributesFromRequest($p, $newRestroomPhoto, $restroom->id, $restroom->addedBy);
-
-                $newRestroomPhoto->save();
-            }
+    
+    private static function uploadPhotos(Request $request, Restroom $restroom) : bool {
+        /* Checking if the image array is greater than the file upload limit */
+        if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
+            Session::flash("invalid_filelimit", "Cannot upload more than ".MAX_UPLOAD_FILESIZE." images.");
+            return false;
         }
-    }
 
-    private static function uploadImages(String $prePath, array $photos)
-    {
-        foreach ($photos as $p) {
-            $p->move($prePath, $p->getClientOriginalName());
-        }
-    }
-
-    private static function assignRestroomPhotoAttributesFromRequest($actualPhoto, $restroomPhoto, $restroomID, $addedBy)
-    {
-        $restroomPhoto->name = $actualPhoto->getClientOriginalName();
-        $restroomPhoto->addedBy = $addedBy || 'Anonymous';
-        $restroomPhoto->reports = 0;
-        $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
-        $restroomPhoto->restroom_id = $restroomID;
-    }
-
-    public function isCorrectFileExtension(array $photos) : bool {
-        foreach ($photos as $p) {
-            $ext = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
-            /* For each photo check if the extension is in the array */
-            if (!in_array($ext, self::FILETYPES))
-            {
+        /* Ensure each photo is within filesize limit */
+        foreach ($request->rr_photos as $p) {
+            if ($p->getError() > 0) {
+                Session::flash("invalid_filelimit", "File size cannot exceed ".(MAX_UPLOAD_FILESIZE / 1024)." MB.");
                 return false;
             }
         }
+        
+        if (!self::verifyPhotoExtensions($request->rr_photos)) {
+            Session::flash("invalid_filetype", "Images must be png, jpeg or jpg.");
+            return false;
+        }
+        
+        /* Upload the file to the public image path */
+        self::uploadImages($request->rr_photos);
+        
         return true;
+    }
+
+    private static function savePhotosToDatabase(Request $request, Restroom $restroom)
+    {
+        foreach ($request->rr_photos as $p) {
+            $fileExtension = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
+            $photoPath = "/img/rp/".$p->newFileName; 
+            
+            $newRP = new RestroomPhoto();
+            
+            $newRP->name = $p->getClientOriginalName();
+            $newRP->addedBy = $request->rr_added_by;
+            $newRP->reports = 0;
+            $newRP->path = $photoPath;
+            $newRP->restroom_id = $restroom->id;
+            
+            $newRP->save();
+        }
+    }
+
+    private static function uploadImages(array $photos)
+    {
+        foreach ($photos as $p) {
+            $fileExtension = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
+            $p->newFileName = RestroomPhoto::getPhotoFileName(file_get_contents($p->getPathname())).".".$fileExtension;
+            
+            $p->move(public_path("/img/rp"), 
+                     $p->newFileName);
+        }
+    }
+
+//    private static function assignRestroomPhotoAttributesFromRequest($actualPhoto, $restroomPhoto, $restroomID, $addedBy)
+//    {
+//        $restroomPhoto->name = $actualPhoto->getClientOriginalName();
+//        $restroomPhoto->addedBy = $addedBy || 'Anonymous';
+//        $restroomPhoto->reports = 0;
+//        $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
+//        $restroomPhoto->restroom_id = $restroomID;
+//    }
+
+    public static function verifyPhotoExtensions(array $photos) : bool {
+        foreach ($photos as $p) {
+            $ext = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
+            
+            /* For each photo check if the extension is in the array */
+            if (!in_array($ext, self::VALID_FILETYPES)) {
+                return false;
+            }
+        } return true;
     }
 
     public function getReviews(Restroom $restroom) {

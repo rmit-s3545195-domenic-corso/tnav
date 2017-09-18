@@ -50,9 +50,4 @@ class Restroom extends Model
         ];
     }
 
-    public static function getPhotoFileName($originalName) {
-        /* Use crc32 hash for shorter name */
-        return hash('crc32', $originalName.rand(0, 1000));
-    }
-
 }

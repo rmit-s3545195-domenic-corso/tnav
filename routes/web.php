@@ -37,7 +37,7 @@ Route::get('tags-for-restroom/{restroom}', function(Restroom $restroom) {
 /* Google Maps API Forward */
 Route::get('/gapi', function () {
     $apiKey = env('MAPS_API_KEY');
-    return file_get_contents("https://maps.googleapis.com/maps/api/js?key=$apiKey");
+    return file_get_contents("https://maps.googleapis.com/maps/api/js?key=$apiKey&libraries=places");
 });
 
 /* Home */
