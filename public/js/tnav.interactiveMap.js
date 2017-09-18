@@ -119,6 +119,7 @@ tnav.interactiveMap.init = function() {
 
     this.addListeners();
     this.navigation.init(this.map);
+    this.reviews.init(this.map.getDiv());
     this.ui.adjustAll();
 };
 

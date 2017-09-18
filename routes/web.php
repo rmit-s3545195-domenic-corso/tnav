@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 
 use App\Restroom;
+use App\Tag;
 use App\Http\Controllers\AdminController;
 
 /*
@@ -23,6 +24,14 @@ Route::get('restroom-list', function() {
 
 Route::get('hash-admin-pwd', function(Request $request) {
     return AdminController::hashPassword($request->p);
+});
+
+Route::get('list-tags', function() {
+    return dd(Tag::all());
+});
+
+Route::get('tags-for-restroom/{restroom}', function(Restroom $restroom) {
+    return $restroom->tags;
 });
 
 /* Google Maps API Forward */
@@ -46,15 +55,24 @@ Route::post('/admin-login', 'AdminController@login');
 
 /* Show 'Add Restroom' form */
 Route::get('/add-restroom', function () {
-    return view('add_restroom', ['restroom' => new Restroom()]);
+    return view('add_restroom', [
+        'restroom' => new Restroom(),
+        'tags' => Tag::all()
+    ]);
 });
 
 /* Process 'Add Restroom' attempt */
 Route::post('/add-restroom', 'RestroomController@add');
 
+/* Query the database and return JSON result (AJAX) */
+Route::get('get-restroom-reviews/{restroom}', 'RestroomController@getReviews');
+
 /* Query the database by Geolocation and return list (JSON array) of nearby
 restrooms */
 Route::get('search-query-geo', 'RestroomController@searchByGeoPos');
+
+/* Process 'Add Review' attempt */
+Route::get('add-review', 'ReviewController@add');
 
 /* *ADMIN* Log out the admin */
 Route::get('/admin-logout', function () {
@@ -84,7 +102,7 @@ Route::get('/delete-restroom/{id}', 'RestroomController@delete');
 Route::get('/edit/{id}', function (Request $request) {
     if (Session::has('admin')) {
         $restroom = Restroom::find($request->id);
-        return view('edit_restroom')->with('restroom', $restroom);
+        return view('edit_restroom')->with('restroom', $restroom)->with('tags',Tag::all());
     } else {
         Session::flash('flash_not_admin', "Unauthorised: Must be an Administrator to edit a restroom");
         return redirect('/');

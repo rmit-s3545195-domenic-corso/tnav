@@ -9,12 +9,15 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Validator;
 use App\Restroom;
 use App\RestroomPhoto;
+use App\RestroomTag;
 use Storage;
 use Session;
 
 class RestroomController extends Controller
 {
-    const FILETYPES = array('image/png', 'image/jpeg', 'image/jpg');
+    const FILETYPES = array('png', 'jpeg', 'jpg');
+    const MAX_UPLOAD_NUM = 20;
+    const MAX_UPLOAD_FILESIZE = 20480;
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -48,23 +51,63 @@ class RestroomController extends Controller
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
 
-        /* Save the Restroom itself to database */
-        $newRestroom->save();
-        
         if (!is_null($request->rr_photos)) {
-            /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
-            $publicImgDir = "/img/$newRestroom->id";
+            /* Checking if the image array is greater than the file upload limit */
+            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
+                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
+                return redirect('/add-restroom')->withInput();
+            }
 
-            $fullPublicImgDir = public_path($publicImgDir);
-            File::makeDirectory($fullPublicImgDir);
+            /* Check File size of each photo passed in
+               Conversion from Bytes to KB */
+            foreach ($request->rr_photos as $p) {
+              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
+              if ($p->getError() > 0) {
+                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
+                  return redirect('/add-restroom')->withInput();
+              }
+            }
 
-            /* Upload the file to the public image path */
-            self::uploadImages($fullPublicImgDir, $request->rr_photos);
+            if (self::isCorrectFileExtension($request->rr_photos)) {
+                $newRestroom->save();
 
-            /* Now the photos are uploaded, make a new database record entry for each photo, associating
-            each record with the newly-created Restroom using the a foreign key */
-            self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+                /* Make a new public images folder (/public/img/{$rr_id}) for the newly-added Restroom */
+                $publicImgDir = "/img/$newRestroom->id";
+
+                $fullPublicImgDir = public_path($publicImgDir);
+                File::makeDirectory($fullPublicImgDir);
+
+                /* Upload the file to the public image path */
+                self::uploadImages($fullPublicImgDir, $request->rr_photos);
+
+                /* Now the photos are uploaded, make a new database record entry for each photo, associating
+                each record with the newly-created Restroom using the a foreign key */
+                self::uploadImagesToDatabase($newRestroom, $request->rr_photos);
+            } else {
+                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+                return redirect('/add-restroom')->withInput();
+            }
+        } else {
+            $newRestroom->save();
         }
+
+        foreach ($request->all() as $k => $v) {
+            if (!is_string($k)) { continue; }
+
+            if (strpos($k, 'rr_tag_') !== false) {
+                $tagID = str_replace("rr_tag_", "", $k);
+
+                $pivotLink = new RestroomTag();
+
+                $pivotLink->restroom_id = $newRestroom->id;
+                $pivotLink->tag_id = $tagID;
+                $pivotLink->timestamps = false;
+
+                $pivotLink->save();
+            }
+        }
+
+
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -87,20 +130,43 @@ class RestroomController extends Controller
 
         /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
-        
+
         if (!is_null($request->rr_photos)) {
-            /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
-            $publicImgDir = "/img/$restroom->id";
+            /* Checking if the image array is greater than the file upload limit */
+            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
+                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
+                return redirect('/edit/' . $restroom->id)->withInput();
+            }
 
-            $fullPublicImgDir = public_path($publicImgDir);
+            /* Check File size of each photo passed in
+               Conversion from Bytes to KB */
+            foreach ($request->rr_photos as $p) {
+              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
+              if ($p->getError() > 0) {
+                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
+                  return redirect('/edit/' . $restroom->id)->withInput();
+              }
+            }
+            
+            if (self::isCorrectFileExtension($request->rr_photos)) {
+                /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
+                $publicImgDir = "/img/$restroom->id";
 
-            /* Upload the file to the public image path */
-            self::uploadImages($fullPublicImgDir, $request->rr_photos);
+                $fullPublicImgDir = public_path($publicImgDir);
 
-            /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
-            associating each record with the newly-created Restroom using the a foreign key */
-            self::uploadImagesToDatabase($restroom, $request->rr_photos);
+                /* Upload the file to the public image path */
+                self::uploadImages($fullPublicImgDir, $request->rr_photos);
 
+                /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
+                associating each record with the newly-created Restroom using the a foreign key */
+                self::uploadImagesToDatabase($restroom, $request->rr_photos);
+
+                $restroom->update();
+            } else {
+                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
+                return redirect('/edit-restroom')->withInput();
+            }
+        } else {
             $restroom->update();
         }
 
@@ -172,6 +238,22 @@ class RestroomController extends Controller
         $restroomPhoto->restroom_id = $restroomID;
     }
 
+    public function isCorrectFileExtension(array $photos) : bool {
+        foreach ($photos as $p) {
+            $ext = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
+            /* For each photo check if the extension is in the array */
+            if (!in_array($ext, self::FILETYPES))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getReviews(Restroom $restroom) {
+        dd($restroom);
+    }
+
     public function searchByGeoPos(Request $request)
     {
         /* Get latitude/longitude values in Request */
@@ -223,12 +305,20 @@ class RestroomController extends Controller
         /* Add 'photoUrls' property to each restroom result */
         foreach ($resultsCollection as $r) {
             $photoUrls = array();
+            $tagUrls = array();
 
             foreach ($r->photos as $p) {
                 $photoUrls[] = $p->path;
             }
 
+            foreach ($r->tags as $t) {
+                $tagUrls[] = $t->iconPath;
+            }
+
             $r->photoUrls = $photoUrls;
+            $r->tagUrls = $tagUrls;
+            $r->reviews = $r->reviews;
+            $r->stars = $r->stars();
         }
 
         /* Return the results as a JSON String */

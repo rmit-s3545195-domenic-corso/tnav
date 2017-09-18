@@ -40,6 +40,25 @@ tnav.interactiveMap.ui.adjustMapResultsContMobile = function() {
 	this.e.mapResultsCont.style.height = "400px";
 };
 
+tnav.interactiveMap.ui.getStarsHTML = function(n) {
+    if (n == undefined) n = 0;
+
+    let html = "";
+
+    let fullStars = 0 || n;
+    let emptyStars = 5 - n;
+
+    for (let i = 0; i < fullStars; i++) {
+        html += "<span class='glyphicon glyphicon-star'></span>";
+    }
+
+    for (let i = 0; i < emptyStars; i++) {
+        html += "<span class='glyphicon glyphicon-star-empty'></span>";
+    }
+
+    return html;
+};
+
 tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	/* Make DIVs */
 	let containerDIV = document.createElement("div");
@@ -63,24 +82,9 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 
 	/* Options for starsContDIV */
 	starsContDIV.className = "result_stars_cont";
-	let fullStars = 0 | result.rating;
-	let emptyStars = 5 - fullStars;
-
-	/* Add full stars */
-	for (let i = 0; i < fullStars; i++) {
-		let star = document.createElement("span");
-		star.className = "glyphicon glyphicon-star";
-		starsContDIV.appendChild(star);
-	}
-
-	/* Add empty stars */
-	for (let i = 0; i < emptyStars; i++) {
-		let star = document.createElement("span");
-		star.className = "glyphicon glyphicon-star-empty";
-		starsContDIV.appendChild(star);
-	}
-
-    if (result.tagUrls) {
+	starsContDIV.innerHTML = this.getStarsHTML(result.stars);
+	
+    if (result.tagUrls && result.tagUrls.length) {
     	/* Options for tags */
     	tagsContDIV.className = "result_tag_cont";
     	for (let i = 0; i < result.tagUrls.length; i++) {
@@ -92,11 +96,11 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
     }
 	/* Options for descDIV */
 	descDIV.className = "result_desc";
-	descDIV.appendChild(document.createTextNode(result.description));
+	descDIV.appendChild(document.createTextNode(result.description || ""));
 
 	/* Options for photosContDIV */
 	photosContDIV.className = "result_photos_cont";
-    
+
     if (result.photoUrls) {
         for (let i = 0; i < result.photoUrls.length; i++) {
             let photoImg = document.createElement ("img");
@@ -106,10 +110,10 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
             photosContDIV.appendChild(photoImg);
         }
     }
-    
+
     /* Options for startNavigationDIV */
     startNavigationDIV.className = "result_start_nav_div";
-    
+
     let startNavButton = document.createElement("button");
     startNavButton.className = "btn btn-primary start_nav_btn";
     startNavButton.appendChild(document.createTextNode("Navigate"));
@@ -119,8 +123,16 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
             result.lng
         ));
     });
-    
+
+    let reviewsButton = document.createElement("button");
+    reviewsButton.className = "btn btn-default reviews_btn";
+    reviewsButton.appendChild(document.createTextNode("Reviews"));
+    reviewsButton.addEventListener("click", function() {
+        tnav.interactiveMap.reviews.showWithRestroom(result);
+    });
+
     startNavigationDIV.appendChild(startNavButton);
+    startNavigationDIV.appendChild(reviewsButton);
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -130,7 +142,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	containerDIV.appendChild(descDIV);
 	containerDIV.appendChild(photosContDIV);
     containerDIV.appendChild(startNavigationDIV);
-    
+
 	return containerDIV;
 };
 
@@ -139,8 +151,10 @@ tnav.interactiveMap.ui.addResultCont = function(resultCont) {
 };
 
 tnav.interactiveMap.ui.clearResults = function() {
-    while (this.e.results.firstChild) {
-        this.e.results.removeChild(this.e.results.firstChild);
+    let results = this.e.results.querySelectorAll(".result_container");
+
+    for (let i = 0; i < results.length; i++) {
+        this.e.results.removeChild(results[i]);
     }
 };
 
@@ -154,7 +168,7 @@ tnav.interactiveMap.ui.addNewResultSet = function(results) {
         resultCont = this.generateResultCont(results[i], i + 1);
         this.addResultCont(resultCont);
     }
-    
+
     imageViewer.addListeners();
 };
 

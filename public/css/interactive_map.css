@@ -42,42 +42,13 @@
     width: 40%;
 }
 
-/* MOBILE RESPONSIVENESS */
-
-@media screen and (max-width: 600px) {
-    #search_cont > * {
-        margin-bottom: 10px;
-    }
-
-    #btn_use_loc, #static_or_text, #inp_search, #btn_search {
-        width: 100%;
-    }
-
-    #btn_use_loc, #search_inp {
-        padding-top: 10px;
-        padding-bottom: 10px;
-    }
-
-    #static_or_text {
-        text-align: center;
-        font-size: 125%;
-    }
-
-    #map {
-        border-right: none;
-        border-bottom: 1px solid #CCC;
-    }
-
-    #map_results_cont {
-        flex-wrap: wrap;
-    }
-
-    #map_results_cont > * {
-        width: 100%;
-    }
-}
-
 /* RESULTS SPECIFIC */
+
+#end_nav_btn {
+    width: 100%;
+    display: none;
+    border-radius: 0 !important;
+}
 
 .result_container {
     background: white;
@@ -130,6 +101,10 @@
     margin-right: 5px;
 }
 
+.result_desc {
+    height: auto;
+}
+
 .result_photos_cont {
     height: 82px;
     padding-top: 7px;
@@ -144,6 +119,13 @@
     margin-right: 5px;
 }
 
+.result_container.condensed .result_photos_cont { display: none; }
+.result_container.condensed .result_desc {
+    max-height: 50px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
 .restroom_img:hover {
     cursor: pointer;
     opacity: 0.7;
@@ -153,4 +135,45 @@
 .start_nav_btn {
     float: right;
     width: auto !important;
+}
+
+.reviews_btn {
+    float: right;
+    width: auto !important;
+    margin-right: 5px;
+}
+
+/* MOBILE RESPONSIVENESS */
+
+@media screen and (max-width: 600px) {
+    #search_cont > * {
+        margin-bottom: 10px;
+    }
+
+    #btn_use_loc, #static_or_text, #inp_search, #btn_search {
+        width: 100%;
+    }
+
+    #btn_use_loc, #search_inp {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    #static_or_text {
+        text-align: center;
+        font-size: 125%;
+    }
+
+    #map {
+        border-right: none;
+        border-bottom: 1px solid #CCC;
+    }
+
+    #map_results_cont {
+        flex-wrap: wrap;
+    }
+
+    #map_results_cont > * {
+        width: 100%;
+    }
 }

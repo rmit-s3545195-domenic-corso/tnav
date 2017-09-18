@@ -14,6 +14,24 @@ tnav.interactiveMap.navigation = {
 tnav.interactiveMap.navigation.init = function(map) {
     this.map = map;
     this.directionsService = new google.maps.DirectionsService();
+    this.e.btnEndNavigation = document.getElementById("end_nav_btn");
+    
+    this.e.btnEndNavigation.addEventListener("click", this.endNavigation.bind(this));
+};
+
+tnav.interactiveMap.navigation.setEndNavigationBtnVisible = function(b) {
+    let dispValue;
+    switch (b) {
+        case true:
+            dispValue = "block";
+            break;
+        case false:
+        default:
+            dispValue = "none";
+            break;
+    }
+    
+    this.e.btnEndNavigation.style.display = dispValue;
 };
 
 /* To be executed on interval. */
@@ -21,7 +39,6 @@ tnav.interactiveMap.navigation.updateUserLocation = function() {
     if (!this.trackingCircle) return;
     
     tnav.location.getPosition(function(geoLoc) {
-        console.log(geoLoc);
         this.trackingCircle.setPosition({
             lat: geoLoc.coords.latitude,
             lng: geoLoc.coords.longitude
@@ -73,9 +90,8 @@ tnav.interactiveMap.navigation.startNavigation = function(destinationLatLng) {
                 
                 this.locationInterval = setInterval(this.updateUserLocation.bind(this), 
                                                     this.LOCATION_UPDATE_FREQUENCY);
-            }
-            else {
-                console.log(response);
+                
+                this.setEndNavigationBtnVisible(true);
             }
         }.bind(this));
     }.bind(this), function() {
@@ -96,5 +112,8 @@ tnav.interactiveMap.navigation.endNavigation = function() {
     if (this.directionsDisplay) {
         this.directionsDisplay.setMap(null);
     }
+    
     this.directionsDisplay = null;
+    
+    this.setEndNavigationBtnVisible(false);
 };

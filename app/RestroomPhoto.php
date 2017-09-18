@@ -4,6 +4,4 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RestroomPhoto extends Model
-{
-}
+class RestroomPhoto extends Model {}
