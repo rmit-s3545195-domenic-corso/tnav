@@ -11,7 +11,7 @@
     padding: 10px;
     border-bottom: 2px solid #DDD;
     animation-name: showResults;
-    animation-duration: 1s;
+    animation-duration: .4s;
     animation-timing-function: ease-in-out;
 }
 

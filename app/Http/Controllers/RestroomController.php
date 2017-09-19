@@ -119,6 +119,24 @@ class RestroomController extends Controller
             self::savePhotosToDatabase($request, $restroom);
         }
 
+
+        RestroomTag::where('restroom_id', '=', $request->id)->delete();
+
+        /* For each tag in the request dont add if its already in the pivot table */
+        foreach ($request->all() as $k => $v) {
+            if (!is_string($k)) { continue; }
+
+            if (strpos($k, 'rr_tag_') !== false) {
+                $tagID = str_replace("rr_tag_", "", $k);
+                $pivotLink = new RestroomTag();
+
+                $pivotLink->restroom_id = $restroom->id;
+                $pivotLink->tag_id = $tagID;
+                $pivotLink->timestamps = false;
+
+                $pivotLink->save();
+            }
+        }
         return redirect('/restroom-list');
     }
 
@@ -139,6 +157,7 @@ class RestroomController extends Controller
         }
 
         $rPhotos->delete();
+        RestroomTag::where('restroom_id', '=', $request->id)->delete();
         Restroom::find($request->id)->delete();
         Session::flash("flash_success", "Restroom has been deleted");
         return redirect('/');

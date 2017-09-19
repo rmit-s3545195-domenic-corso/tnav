@@ -42,7 +42,15 @@
         <label for="tags">Tags</label>
         <br />
         @foreach($tags as $t)
-            <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" /> {{$t->name}}
+            @if (count($restroom->tags()->get()) != 0)
+                @if($restroom->tags()->find($t->id))
+                    <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" checked/> {{$t->name}}
+                @else
+                    <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" /> {{$t->name}}
+                @endif
+            @else
+                <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}"/> {{$t->name}}
+            @endif
         @endforeach
     </div>
     <div class="form-group">
