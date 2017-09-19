@@ -50,7 +50,7 @@ class RestroomController extends Controller
 
         /* Assign its attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $newRestroom);
-        
+
         /* If photos were uploaded, attempt to save them to the disk */
         if (!is_null($request->rr_photos)) {
             if (!self::uploadPhotos($request, $newRestroom)) {
@@ -58,9 +58,9 @@ class RestroomController extends Controller
                     ->withInput();
             }
         }
-        
+
         $newRestroom->save();
-        
+
         /* If photos were uploaded, save them to the database */
         if (!is_null($request->rr_photos)) {
             self::savePhotosToDatabase($request, $newRestroom);
@@ -104,43 +104,19 @@ class RestroomController extends Controller
         /* Update Restroom attributes from the request */
         self::assignRestroomAttributesFromRequest($request, $restroom);
 
+        /* If photos were uploaded, attempt to save them to the disk */
         if (!is_null($request->rr_photos)) {
-            /* Checking if the image array is greater than the file upload limit */
-            if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
-                Session::flash("invalid_filelimit", "Cannot upload more than 20 images");
-                return redirect('/edit/' . $restroom->id)->withInput();
+            if(!self::uploadPhotos($request, $restroom)) {
+                return redirect('/edit/' . $restroom->id)
+                    ->withInput();
             }
+        }
 
-            /* Check File size of each photo passed in
-               Conversion from Bytes to KB */
-            foreach ($request->rr_photos as $p) {
-              $MAX_SIZE = self::MAX_UPLOAD_FILESIZE/1024;
-              if ($p->getError() > 0) {
-                  Session::flash("invalid_filelimit", "File size cannot exceed ".$MAX_SIZE." MB");
-                  return redirect('/edit/' . $restroom->id)->withInput();
-              }
-            }
-            
-            if (self::isCorrectFileExtension($request->rr_photos)) {
-                /*Assign a new public images folder (/public/img/{$rr_id}) for the found Restroom */
-                $publicImgDir = "/img/$restroom->id";
+        $restroom->update();
 
-                $fullPublicImgDir = public_path($publicImgDir);
-
-                /* Upload the file to the public image path */
-                self::uploadImages($fullPublicImgDir, $request->rr_photos);
-
-                /* Now the photos are uploaded, make a new database record entry for each photo if that photo doesnt already exist,
-                associating each record with the newly-created Restroom using the a foreign key */
-                self::uploadImagesToDatabase($restroom, $request->rr_photos);
-
-                $restroom->update();
-            } else {
-                Session::flash("invalid_filetype", "ERROR: Images must be png, jpeg or jpg");
-                return redirect('/edit-restroom')->withInput();
-            }
-        } else {
-            $restroom->update();
+        /* If photos were uploaded save them to the database */
+        if (!is_null($request->rr_photos)) {
+            self::savePhotosToDatabase($request, $restroom);
         }
 
         return redirect('/restroom-list');
@@ -148,8 +124,21 @@ class RestroomController extends Controller
 
     public function delete(Request $request)
     {
-        RestroomPhoto::where('restroom_id', '=', $request->id)->delete();
-        File::deleteDirectory(public_path('/img/'.$request->id));
+        /* Getting the photos from the database where the id is equal to the restroom id to be deleted */
+        $rPhotos = RestroomPhoto::where('restroom_id', '=', $request->id);
+
+        /* For each photo found with the restroom id, check if the photo name is found more than once.
+           If it is found more than once dont delete */
+        foreach ($rPhotos->get() as $rp) {
+            $rPhotoNames = RestroomPhoto::where('name', '=', $rp->name)->get();
+            if (count($rPhotoNames) < 2) {
+                if (file_exists(public_path($rp->path))) {
+                    unlink(public_path($rp->path));
+                }
+            } else { continue; }
+        }
+
+        $rPhotos->delete();
         Restroom::find($request->id)->delete();
         Session::flash("flash_success", "Restroom has been deleted");
         return redirect('/');
@@ -170,7 +159,7 @@ class RestroomController extends Controller
             ->get()
             ->toJson();
     }
-    
+
     private static function uploadPhotos(Request $request, Restroom $restroom) : bool {
         /* Checking if the image array is greater than the file upload limit */
         if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
@@ -185,15 +174,15 @@ class RestroomController extends Controller
                 return false;
             }
         }
-        
+
         if (!self::verifyPhotoExtensions($request->rr_photos)) {
             Session::flash("invalid_filetype", "Images must be png, jpeg or jpg.");
             return false;
         }
-        
+
         /* Upload the file to the public image path */
         self::uploadImages($request->rr_photos);
-        
+
         return true;
     }
 
@@ -201,16 +190,16 @@ class RestroomController extends Controller
     {
         foreach ($request->rr_photos as $p) {
             $fileExtension = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
-            $photoPath = "/img/rp/".$p->newFileName; 
-            
+            $photoPath = "/img/rp/".$p->newFileName;
+
             $newRP = new RestroomPhoto();
-            
+
             $newRP->name = $p->getClientOriginalName();
             $newRP->addedBy = $request->rr_added_by;
             $newRP->reports = 0;
             $newRP->path = $photoPath;
             $newRP->restroom_id = $restroom->id;
-            
+
             $newRP->save();
         }
     }
@@ -220,25 +209,16 @@ class RestroomController extends Controller
         foreach ($photos as $p) {
             $fileExtension = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
             $p->newFileName = RestroomPhoto::getPhotoFileName(file_get_contents($p->getPathname())).".".$fileExtension;
-            
-            $p->move(public_path("/img/rp"), 
+
+            $p->move(public_path("/img/rp"),
                      $p->newFileName);
         }
     }
 
-//    private static function assignRestroomPhotoAttributesFromRequest($actualPhoto, $restroomPhoto, $restroomID, $addedBy)
-//    {
-//        $restroomPhoto->name = $actualPhoto->getClientOriginalName();
-//        $restroomPhoto->addedBy = $addedBy || 'Anonymous';
-//        $restroomPhoto->reports = 0;
-//        $restroomPhoto->path = "img/$restroomID/".$actualPhoto->getClientOriginalName();
-//        $restroomPhoto->restroom_id = $restroomID;
-//    }
-
     public static function verifyPhotoExtensions(array $photos) : bool {
         foreach ($photos as $p) {
             $ext = pathinfo($p->getClientOriginalName(), PATHINFO_EXTENSION);
-            
+
             /* For each photo check if the extension is in the array */
             if (!in_array($ext, self::VALID_FILETYPES)) {
                 return false;
