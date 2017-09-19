@@ -66,21 +66,7 @@ class RestroomController extends Controller
             self::savePhotosToDatabase($request, $newRestroom);
         }
 
-        foreach ($request->all() as $k => $v) {
-            if (!is_string($k)) { continue; }
-
-            if (strpos($k, 'rr_tag_') !== false) {
-                $tagID = str_replace("rr_tag_", "", $k);
-
-                $pivotLink = new RestroomTag();
-
-                $pivotLink->restroom_id = $newRestroom->id;
-                $pivotLink->tag_id = $tagID;
-                $pivotLink->timestamps = false;
-
-                $pivotLink->save();
-            }
-        }
+        self::addTagFromRequest($request, $newRestroom);
 
         /* Redirect to restroom list for development, change this later on */
         return redirect('/restroom-list');
@@ -119,10 +105,15 @@ class RestroomController extends Controller
             self::savePhotosToDatabase($request, $restroom);
         }
 
-
         RestroomTag::where('restroom_id', '=', $request->id)->delete();
 
-        /* For each tag in the request dont add if its already in the pivot table */
+        self::addTagFromRequest($request, $restroom);
+
+        return redirect('/restroom-list');
+    }
+
+    private static function addTagFromRequest(Request $request, Restroom $restroom)
+    {
         foreach ($request->all() as $k => $v) {
             if (!is_string($k)) { continue; }
 
@@ -137,7 +128,6 @@ class RestroomController extends Controller
                 $pivotLink->save();
             }
         }
-        return redirect('/restroom-list');
     }
 
     public function delete(Request $request)
