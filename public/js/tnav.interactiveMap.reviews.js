@@ -1,4 +1,5 @@
 tnav.interactiveMap.reviews = {
+    REPORT_THRESHOLD: 10,
     e: {
         map: document.getElementById("map"),
         overlay: document.getElementById("reviews_cont"),
@@ -135,6 +136,10 @@ tnav.interactiveMap.reviews.showWithRestroom = function(restroom) {
     
     /* Show each restroom as part of review. */
     for (let r of restroom.reviews) {
+        if (r.reports >= this.REPORT_THRESHOLD) {
+            continue;
+        }
+
         if (!r.author) {
             r.author = "Anonymous";
         }
