@@ -74,6 +74,9 @@ Route::get('search-query-geo', 'RestroomController@searchByGeoPos');
 /* Process 'Add Review' attempt */
 Route::get('add-review', 'ReviewController@add');
 
+/* Process 'Report Review' attempt */
+Route::get('report-review/{review}', 'ReviewController@report');
+
 /* *ADMIN* Log out the admin */
 Route::get('/admin-logout', function () {
     /* Clear the session and go back to home */

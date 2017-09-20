@@ -153,7 +153,9 @@ tnav.interactiveMap.reviews.showWithRestroom = function(restroom) {
 
 tnav.interactiveMap.reviews.ajax = {
     reportReview: function(id) {
-        console.log(id);
+        BL.httpGET('report-review/' + id, {}, function(response) {
+            console.log(response);
+        });
     },
     addReview: function(reviewProps) {
         BL.httpGET('add-review', reviewProps, function(response) {
