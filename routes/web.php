@@ -31,7 +31,7 @@ Route::get('list-tags', function() {
 });
 
 Route::get('tags-for-restroom/{restroom}', function(Restroom $restroom) {
-    return $restroom->tags;
+    return dd($restroom->tags);
 });
 
 /* Google Maps API Forward */
@@ -42,7 +42,9 @@ Route::get('/gapi', function () {
 
 /* Home */
 Route::get('/', function () {
-    return view('interactive_map');
+    return view('interactive_map', [
+        'tags' => Tag::all()
+    ]);
 });
 
 /* Show admin login form */

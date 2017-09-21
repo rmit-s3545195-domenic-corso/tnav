@@ -28,40 +28,7 @@
             <button id="reviews_cont_submit_btn" class="btn btn-success">Submit</button>
         </div>
         <div id="reviews_cont_all_reviews_title">All Reviews</div>
-        <div id="reviews_cont_all_reviews_cont">
-            <div class="restroom_review">
-                <div class="restroom_review_author">Domenic Corso</div>
-                -
-                <div class="restroom_review_stars">
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                </div>
-                <div class="restroom_review_body">
-                    Yeah mate there is bloody shit on the walls!
-                </div>
-                <div class="restroom_review_added">2 months ago</div>
-                <div class="restroom_review_report">Report</div>
-            </div>
-            <div class="restroom_review">
-                <div class="restroom_review_author">Domenic Corso</div>
-                - 
-                <div class="restroom_review_stars">
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                </div>
-                <div class="restroom_review_body">
-                    Yeah mate there is bloody shit on the walls!
-                </div>
-                <div class="restroom_review_added">2 months ago</div>
-                <div class="restroom_review_report">Report</div>
-            </div>
-        </div>
+        <div id="reviews_cont_all_reviews_cont"></div>
     </div>
     <!-- Custom Search Bar -->
     <div id="search_cont">
@@ -70,6 +37,9 @@
         </button>
         <strong id="static_or_text">OR</strong>
         <input type="text" id="inp_search" placeholder="Enter keywords" />
+        @foreach($tags as $t)
+            <input type="checkbox" class="tag_checkbox" data-id="{{$t->id}}" />&nbsp;{{$t->name}}&nbsp;
+        @endforeach
         <button class="btn btn-default" id="btn_search" type="button">
         Search
         </button>

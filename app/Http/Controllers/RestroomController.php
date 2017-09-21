@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Restroom;
 use App\RestroomPhoto;
 use App\RestroomTag;
+use App\Tag;
 use Storage;
 use Session;
 
@@ -114,10 +115,11 @@ class RestroomController extends Controller
 
     private static function addTagFromRequest(Request $request, Restroom $restroom)
     {
+        /* Attachs a tag to a restrom and store it into an association/pivot table */
         foreach ($request->all() as $k => $v) {
             if (!is_string($k)) { continue; }
 
-            if (strpos($k, 'rr_tag_') !== false) {
+            if (strpos($k, "rr_tag_") !== false) {
                 $tagID = str_replace("rr_tag_", "", $k);
                 $pivotLink = new RestroomTag();
 
@@ -147,9 +149,12 @@ class RestroomController extends Controller
         }
 
         $rPhotos->delete();
-        RestroomTag::where('restroom_id', '=', $request->id)->delete();
+
+        /* TODO Change this to a nice Eloquent way */
+        RestroomTag::where("restroom_id", "=", $request->id)->delete();
         Restroom::find($request->id)->delete();
         Session::flash("flash_success", "Restroom has been deleted");
+
         return redirect('/');
     }
 
@@ -241,9 +246,15 @@ class RestroomController extends Controller
 
     public function searchByGeoPos(Request $request)
     {
-        /* Get latitude/longitude values in Request */
+        /* Get/parse/convert values in Request */
         $lat = self::simplifyLatLngVal($request->lat);
         $lng = self::simplifyLatLngVal($request->lng);
+        $tagIdsFilter = array();
+
+        /* If filters are provided, make an array of tag IDs */
+        if (isset($request->filter)) {
+            $tagIdsFilter = array_map('intval', explode(",", $request->filter));
+        }
 
         /* Don't do anything if lat/lng are not provided */
         if (is_null($lat) || is_null($lng)) {
@@ -274,11 +285,25 @@ class RestroomController extends Controller
 
         /* Check each restroom and see if they fall in bounds */
         foreach (Restroom::all() as $r) {
+            $matchesFilter = boolval(count($tagIdsFilter) == 0);
             $currLat = self::simplifyLatLngVal($r->lat);
             $currLng = self::simplifyLatLngVal($r->lng);
 
+            /* If the Restroom matches the filter requirements */
+            $tagIds = array_map("App\Tag::getIdMapFunction", json_decode($r->tags->toJson()));
+
+            /* If the Restroom has at least one of the filter requirements,
+            it 'matches' and will be added to the list of results */
+            foreach ($tagIdsFilter as $filterId) {
+                if (in_array($filterId, $tagIds)) {
+                    $matchesFilter = true;
+                    break;
+                }
+            }
+
             /* If Restroom is in range, add it to array of found restrooms */
-            if ($currLat <= $b1Lat && $currLat >= $b2Lat && $currLng >= $b1Lng && $currLng <= $b2Lng) {
+            if ($matchesFilter && $currLat <= $b1Lat && $currLat >= $b2Lat
+            && $currLng >= $b1Lng && $currLng <= $b2Lng) {
                 $results[] = $r;
             }
         }

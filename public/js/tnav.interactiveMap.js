@@ -5,7 +5,8 @@ tnav.interactiveMap = {
     resultsMarkers: [],
     e: {
         map: document.getElementById("map"),
-        findNearMeBtn: document.getElementById("btn_use_loc")
+        findNearMeBtn: document.getElementById("btn_use_loc"),
+        tagCheckboxes: document.querySelectorAll(".tag_checkbox")
     },
     DESKTOP_ZOOM: 17,
     MOBILE_ZOOM: 15
@@ -54,7 +55,7 @@ tnav.interactiveMap.newResultMarker = function(result, resultNum) {
         map: this.map,
         label: resultNum.toString()
     });
-    
+
     this.resultsMarkers.push(marker);
 };
 
@@ -86,9 +87,19 @@ tnav.interactiveMap.setYouAreHere = function(geoPos) {
 /* Make a request to database to find restrooms around a particular
 latLng location, then fill results and show markers on map */
 tnav.interactiveMap.fetchRestroomList = function(latLng) {
+    let tagIds = [];
+    for (let i = 0; i < this.e.tagCheckboxes.length; i++) {
+        if (this.e.tagCheckboxes[i].checked) {
+            tagIds.push(this.e.tagCheckboxes[i].getAttribute("data-id"));
+        }
+    }
+
+    console.log(tagIds);
+
     BL.httpGET("/search-query-geo", {
         lat: latLng.lat,
-        lng: latLng.lng
+        lng: latLng.lng,
+        filter: tagIds
     }, this.evtCallbacks.resultsReturned.bind(this));
 };
 

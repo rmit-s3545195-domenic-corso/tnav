@@ -22,7 +22,6 @@ BL.httpGET = (url, vars, callback) => {
 		}
 	}
 
-	xhrObj.timeout = 250;
 	xhrObj.open("GET", url, true);
 	xhrObj.send();
 };
