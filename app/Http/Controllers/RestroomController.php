@@ -19,6 +19,7 @@ class RestroomController extends Controller
     const VALID_FILETYPES = array('png', 'jpeg', 'jpg');
     const MAX_UPLOAD_NUM = 20;
     const MAX_UPLOAD_FILESIZE = 20480 * 1024;
+    const REPORTED_RESTROOMS_KEY = 'reported_restrooms';
 
     /* Update Restroom attributes, accepts Request and Restroom */
     private static function assignRestroomAttributesFromRequest(Request $request, Restroom $restroom) : Restroom
@@ -337,5 +338,42 @@ class RestroomController extends Controller
 
     private function simplifyLatLngVal(string $latLngText) : float {
         return round(floatval($latLngText), 5);
+    }
+
+    /* 
+        A list of reported restrooms will be stored in the session as an array of 
+        keys, for example:
+            Session->reported_restrooms = array('1', '4', '9')
+        This means the current session holder has reported restrooms with the IDs 
+        of 1, 4 and 9.
+
+        Helpful doc: https://laravel.com/docs/5.5/session
+    */
+    public function report(Restroom $restroom, Request $request) {
+        $session = $request->session();
+
+        /* If there is no 'reported restrooms' key in the session, then add one
+        before proceeding. */
+        if (!$session->exists(self::REPORTED_RESTROOMS_KEY)) {
+            $session->put(self::REPORTED_RESTROOMS_KEY, array());
+        }
+
+        $reportedRestroomsIds = $session->get(self::REPORTED_RESTROOMS_KEY);
+
+        /* If the guest has already reported this restroom, return an error 
+        message saying so. */
+        if (in_array($restroom->id, $reportedRestroomsIds)) {
+            return 'ALREADY_REPORTED';
+        }
+
+        /* If they have not already reported this restroom, increment the amount
+        of reports the restroom has, save it and add it to the list of restrooms
+        the guest has reported. */
+
+        $restroom->reports++;
+        $restroom->save();
+        $session->push(self::REPORTED_RESTROOMS_KEY, $restroom->id);
+
+        return 'SUCCESS';
     }
 }

@@ -66,6 +66,9 @@ Route::get('/add-restroom', function () {
 /* Process 'Add Restroom' attempt */
 Route::post('/add-restroom', 'RestroomController@add');
 
+/* Process 'Report Restroom' attempt */
+Route::get('report-restroom/{restroom}', 'RestroomController@report');
+
 /* Query the database and return JSON result (AJAX) */
 Route::get('get-restroom-reviews/{restroom}', 'RestroomController@getReviews');
 

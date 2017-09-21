@@ -1,4 +1,5 @@
 tnav.interactiveMap = {
+    REPORT_THRESHOLD: 10,
     map: null,
     youAreHereMarker: null,
     youAreHereInfoWindow: null,
@@ -34,8 +35,14 @@ tnav.interactiveMap.evtCallbacks = {
     resultsReturned: function(response) {
         let restroomResults = JSON.parse(response);
 
-        this.ui.addNewResultSet(restroomResults);
-        this.newMarkerSet(restroomResults);
+	for (let r of restroomResults) {
+            if (r.reports >= this.REPORT_THRESHOLD) {
+                continue;
+            }        
+	    this.ui.addNewResultSet(restroomResults);
+	    this.newMarkerSet(restroomResults);
+        }
+
         this.navigation.scrollToMap();
     }
 };
@@ -102,6 +109,11 @@ tnav.interactiveMap.fetchRestroomList = function(latLng) {
         filter: tagIds
     }, this.evtCallbacks.resultsReturned.bind(this));
 };
+
+tnav.interactiveMap.reportRestroom = function(id) {
+    BL.httpGET("/report-restroom/" + id, {}, console.log);
+};
+
 
 tnav.interactiveMap.init = function() {
     let mapOptions = {

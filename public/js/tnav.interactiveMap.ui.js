@@ -115,7 +115,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
     startNavigationDIV.className = "result_start_nav_div";
 
     let startNavButton = document.createElement("button");
-    startNavButton.className = "btn btn-primary start_nav_btn";
+    startNavButton.className = "btn btn-primary";
     startNavButton.appendChild(document.createTextNode("Navigate"));
     startNavButton.addEventListener("click", function() {
         tnav.interactiveMap.navigation.startNavigation(new google.maps.LatLng(
@@ -125,14 +125,24 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
     });
 
     let reviewsButton = document.createElement("button");
-    reviewsButton.className = "btn btn-default reviews_btn";
+    reviewsButton.className = "btn btn-default";
     reviewsButton.appendChild(document.createTextNode("Reviews"));
     reviewsButton.addEventListener("click", function() {
         tnav.interactiveMap.reviews.showWithRestroom(result);
     });
 
-    startNavigationDIV.appendChild(startNavButton);
+    let reportButton = document.createElement("button");
+    reportButton.className = "btn btn-danger";
+    reportButton.appendChild(document.createTextNode("Report"));
+    reportButton.addEventListener("click", function(e) {
+        e.target.disabled = true;
+	tnav.interactiveMap.reportRestroom(result.id); 
+   });
+
+
+   startNavigationDIV.appendChild(startNavButton);
     startNavigationDIV.appendChild(reviewsButton);
+    startNavigationDIV.appendChild(reportButton);
 
 	/* Add/append childs */
 	headerDIV.appendChild(nameDIV);
@@ -142,6 +152,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	containerDIV.appendChild(descDIV);
 	containerDIV.appendChild(photosContDIV);
     containerDIV.appendChild(startNavigationDIV);
+
 
 	return containerDIV;
 };

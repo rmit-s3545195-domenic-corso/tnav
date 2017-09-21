@@ -132,12 +132,7 @@
     border-radius: 2px;
 }
 
-.start_nav_btn {
-    float: right;
-    width: auto !important;
-}
-
-.reviews_btn {
+.result_start_nav_div * {
     float: right;
     width: auto !important;
     margin-right: 5px;
