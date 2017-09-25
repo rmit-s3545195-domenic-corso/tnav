@@ -1,0 +1,114 @@
+#image-gallery-theatre-overlay {
+	box-sizing: border-box;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	color: #FFF;
+	background-color: rgba(0, 0, 0, 0.9);
+	display: none; /* flex if shown */
+	justify-content: center;
+	align-items: center;
+	cursor: default;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
+#image-gallery-theatre-image-container {
+	border: 1px solid #FFF;
+	background-color: #FFF;
+}
+
+#image-gallery-theatre-top-bar {
+	box-sizing: border-box;
+	width: 100%;
+	height: 35px;
+	padding: 8px;
+	background-color: #000;
+	border-bottom: 1px solid #FFF;
+	overflow: hidden;
+}
+
+#image-gallery-theatre-top-bar > * {
+	height: 100%;
+	box-sizing: border-box;
+	float: left;
+}
+
+#image-gallery-theatre-img-desc {
+	width: 90%;
+	font-size: 14px;
+	cursor: auto;
+	user-select: text;
+	-moz-user-select: text;
+	-webkit-user-select: text;
+	-ms-user-select: text;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#image-gallery-theatre-close-btn-cont {
+	width: 10%;
+	text-align: right;
+}
+
+#image-gallery-theatre-close-btn {
+	height: 100%;
+	cursor: pointer;
+}
+
+#image-gallery-theatre-image {
+	height: 400px;
+	margin: 0 auto;
+	display: block;
+}
+
+#image-gallery-theatre-extra-func-buttons-cont {
+	text-align: right;
+	padding: 2px 0;
+}
+
+.image-gallery-theatre-extra-func-button {
+	background: none;
+	border: none;
+	padding: 0;
+	margin-right: 5px;
+	color: #FFF;
+	font-size: 12px;
+	letter-spacing: 1px;
+	cursor: pointer;
+}
+
+.image-gallery-theatre-extra-func-button:last-of-type {
+	margin-right: 0;
+} 
+
+#image-gallery-theatre-controls {
+	display: flex;
+	justify-content: center;
+	padding-bottom: 10px;
+}
+
+#image-gallery-theatre-controls.paddingTop { padding-top: 10px; }
+
+#image-gallery-theatre-image-position-label {
+	min-width: 125px;
+	display: flex;
+	align-items: center;
+	margin: 0 15px;
+	justify-content: center;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-size: 14px;
+}
+
+.image-gallery-theatre-nav-btn {
+	opacity: 0.85;
+	cursor: pointer;
+}
+
+.image-gallery-theatre-nav-btn:hover { opacity: 1 }

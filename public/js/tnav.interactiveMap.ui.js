@@ -99,7 +99,7 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
 	descDIV.appendChild(document.createTextNode(result.description || ""));
 
 	/* Options for photosContDIV */
-	photosContDIV.className = "result_photos_cont";
+	photosContDIV.className = "result_photos_cont image-group";
 
     if (result.photoUrls) {
         for (let i = 0; i < result.photoUrls.length; i++) {
@@ -180,7 +180,7 @@ tnav.interactiveMap.ui.addNewResultSet = function(results) {
         this.addResultCont(resultCont);
     }
 
-    imageViewer.addListeners();
+    ImageGallery.addThumbnailListeners();
 };
 
 tnav.interactiveMap.ui.init = function() {
