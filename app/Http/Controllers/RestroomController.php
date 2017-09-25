@@ -178,14 +178,14 @@ class RestroomController extends Controller
     private static function uploadPhotos(Request $request, Restroom $restroom) : bool {
         /* Checking if the image array is greater than the file upload limit */
         if (count($request->rr_photos) > self::MAX_UPLOAD_NUM) {
-            Session::flash("invalid_filelimit", "Cannot upload more than ".MAX_UPLOAD_FILESIZE." images.");
+            Session::flash("invalid_filelimit", "Cannot upload more than ".self::MAX_UPLOAD_FILESIZE." images.");
             return false;
         }
 
         /* Ensure each photo is within filesize limit */
         foreach ($request->rr_photos as $p) {
             if ($p->getError() > 0) {
-                Session::flash("invalid_filelimit", "File size cannot exceed ".(MAX_UPLOAD_FILESIZE / 1024)." MB.");
+                Session::flash("invalid_filelimit", "File size cannot exceed ".(self::MAX_UPLOAD_FILESIZE / 1024)." MB.");
                 return false;
             }
         }
