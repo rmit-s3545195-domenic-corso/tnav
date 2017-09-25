@@ -132,7 +132,8 @@
     border-radius: 2px;
 }
 
-.result_start_nav_div * {
+.result_buttons_div * {
+    font-size: 11px;
     float: right;
     width: auto !important;
     margin-right: 5px;
@@ -170,5 +171,12 @@
 
     #map_results_cont > * {
         width: 100%;
+    }
+
+    .result_buttons_div * {
+        width: 100% !important;
+        display: block;
+        float: none;
+        margin-bottom: 5px;
     }
 }

@@ -21,6 +21,10 @@ tnav.interactiveMap.evtCallbacks = {
                 tnav.interactiveMap.navigation.endNavigation();
                 tnav.interactiveMap.setCenterPos(geoPos);
                 tnav.interactiveMap.setYouAreHere(geoPos);
+
+                tnav.location.recentLoc.lat = geoPos.coords.latitude;
+                tnav.location.recentLoc.lng = geoPos.coords.longitude;
+
                 tnav.interactiveMap.fetchRestroomList({
                     lat: geoPos.coords.latitude,
                     lng: geoPos.coords.longitude
