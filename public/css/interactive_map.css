@@ -174,9 +174,20 @@
     }
 
     .result_buttons_div * {
-        width: 100% !important;
-        display: block;
         float: none;
         margin-bottom: 5px;
     }
+
+    .checkbox-group {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .checkbox-group > .checkbox-button {
+        letter-spacing: 0 !important;
+        font-size: 12px !important;
+        padding: 4px !important;
+    } 
 }

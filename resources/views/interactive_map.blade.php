@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Current Location')
+@section('title', 'Interactive Map')
 
 @section('styles')
     <link href="{{ url('/css/interactive_map.css') }}" rel="stylesheet" />

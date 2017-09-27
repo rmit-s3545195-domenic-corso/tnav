@@ -1,5 +1,6 @@
 .checkbox-group {
 	display: inline-flex;
+	flex-wrap: wrap;
 	-moz-user-select: none;
 	-webkit-user-select: none;
 	user-select: none;
