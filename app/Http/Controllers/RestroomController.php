@@ -185,7 +185,7 @@ class RestroomController extends Controller
         /* Ensure each photo is within filesize limit */
         foreach ($request->rr_photos as $p) {
             if ($p->getError() > 0) {
-                Session::flash("invalid_filelimit", "File size cannot exceed ".(self::MAX_UPLOAD_FILESIZE / 1024)." MB.");
+                Session::flash("invalid_filelimit", "File size cannot exceed ".ini_get('upload_max_filesize').'!');
                 return false;
             }
         }

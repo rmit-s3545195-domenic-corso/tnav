@@ -7,6 +7,7 @@
     <link href="{{ url('/css/image_viewer.css') }}"  rel="stylesheet" />
     <link href="{{ url('/css/reviews.css') }}"  rel="stylesheet" />
     <link href="{{ url('/lib/image-gallery/css/image-gallery.css') }}"  rel="stylesheet" />
+    <link href="{{ url('/lib/custom-checkbox/custom-checkbox.css') }}"  rel="stylesheet" />
 @endsection
 
 @section('content')
@@ -38,9 +39,12 @@
         </button>
         <strong id="static_or_text">OR</strong>
         <input type="text" id="inp_search" placeholder="Enter keywords" />
-        @foreach($tags as $t)
-            <input type="checkbox" class="tag_checkbox" data-id="{{$t->id}}" />&nbsp;{{$t->name}}&nbsp;
-        @endforeach
+        <div class="checkbox-group">
+            @foreach($tags as $t)
+                <div class="checkbox-button" name="{{$t->id}}">{{$t->name}}</div>
+                <input type="checkbox" class="tag_checkbox hide-checkbox" data-id="{{$t->id}}" name="{{$t->id}}" />
+            @endforeach
+        </div>
         <button class="btn btn-default" id="btn_search" type="button">
         Search
         </button>
@@ -63,6 +67,7 @@
     <script src="{{ url('/js/tnav.interactiveMap.reviews.js') }}"></script>
     <script src="{{ url('/js/tnav.interactiveMap.customSearch.js') }}"></script>
     <script src="{{ url('/lib/image-gallery/js/image-gallery.js') }}"></script>
+    <script src="{{ url('/lib/custom-checkbox/custom-checkbox.js') }}"></script>
     <script>
         tnav.interactiveMap.init();
     </script>

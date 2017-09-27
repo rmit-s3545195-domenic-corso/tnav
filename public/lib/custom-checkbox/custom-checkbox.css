@@ -1,0 +1,35 @@
+.checkbox-group {
+	display: inline-flex;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.checkbox-group > .checkbox-button {
+	font-family: sans-serif;
+	font-size: 12px;
+	letter-spacing: 1px;
+	color: #FFF;
+	padding: 8px;
+	background-color: #B19AF5;
+	border-right: 1px solid #FFF;
+}
+
+.checkbox-group > .checkbox-button.selected {
+	background-color: #521DF2;
+}
+
+.checkbox-group > .checkbox-button:first-of-type {
+	border-radius: 5px 0 0 5px;
+}
+
+.checkbox-group > .checkbox-button:last-of-type {
+	border-right: none;
+	border-radius: 0 5px 5px 0;
+}
+
+.hide-checkbox {
+	display: none;
+}

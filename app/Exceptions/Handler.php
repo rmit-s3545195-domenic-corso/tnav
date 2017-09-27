@@ -44,9 +44,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        // if ($exception instanceof \ErrorException) {
-        //     return response()->view('errors.500', ['exception' => $exception], 500);
-        // }
+
+        if ($exception instanceof PostTooLargeException) {
+            return response('Too large m8', 422);
+        }
+
+        if ($exception instanceof \ErrorException) {
+            return response()->view('errors.500', ['exception' => $exception], 500);
+        }
 
         return parent::render($request, $exception);
     }

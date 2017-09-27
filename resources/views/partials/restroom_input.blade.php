@@ -41,17 +41,22 @@
     <div class="form-group">
         <label for="tags">Tags</label>
         <br />
+        <div class="checkbox-group">
         @foreach($tags as $t)
             @if (count($restroom->tags()->get()) != 0)
                 @if($restroom->tags()->find($t->id))
-                    <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" checked/> {{$t->name}}
+                    <div class="checkbox-button selected" name="{{ 'rr_tag_'.$t->id }}">{{$t->name}}</div>
+                    <input type="checkbox" class="hide-checkbox" name="{{ 'rr_tag_'.$t->id }}" checked />
                 @else
-                    <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}" /> {{$t->name}}
+                    <div class="checkbox-button" name="{{ 'rr_tag_'.$t->id }}">{{$t->name}}</div>
+                    <input type="checkbox" class="hide-checkbox" name="{{ 'rr_tag_'.$t->id }}" />
                 @endif
             @else
-                <input type="checkbox" name="{{ 'rr_tag_'.$t->id }}"/> {{$t->name}}
+                    <div class="checkbox-button" name="{{ 'rr_tag_'.$t->id }}">{{$t->name}}</div>
+                    <input type="checkbox" class="hide-checkbox" name="{{ 'rr_tag_'.$t->id }}" />
             @endif
         @endforeach
+        </div>
     </div>
     <div class="form-group">
         <label for="rr_added_by">Optional - Upload Images</label>
