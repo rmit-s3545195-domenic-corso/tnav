@@ -14,16 +14,6 @@ class RestroomPhotoTest extends TestCase
 {
     const VALID_FILETYPES = array('png', 'jpeg', 'jpg');
 
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
-
     /*
      * Testing for valid file extension of uploaded image
      * Valid file types are specified above
