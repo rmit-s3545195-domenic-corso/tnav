@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Restroom;
+use App\Review;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -127,7 +128,38 @@ class RestroomTest extends TestCase
     have an average star rating of 4. */
     public function testStarsAlgorithm()
     {
-        // TODO
+        $restroom = new Restroom();
+
+        $restroom->name = "RMIT Building 56";
+        $restroom->description = "Its a bit far but its pretty clean";
+        $restroom->lat = "37.0002";
+        $restroom->lng = "-147.033";
+        $restroom->floor = "10";
+        $restroom->addedBy = "Domenic Corso";
+        $restroom->reports = 0;
+
+        $restroom->save();
+
+        $review1 = new Review();
+        $review1->restroom_id = $restroom->id;
+        $review1->author = 'Lu';
+        $review1->body = 'I did not like this restroom at all';
+        $review1->stars = 2;
+        $review1->save();
+
+        $review2 = new Review();
+        $review2->restroom_id = $restroom->id;
+        $review2->author = 'Varsha';
+        $review2->body = 'I enjoyed using this toilet';
+        $review2->stars = 5;
+        $review2->save();
+
+        $expectedRating  = 4;
+        $this->assertEquals($expectedRating, $restroom->stars());
+
+        $restroom->delete();
+        $review1->delete();
+        $review2->delete();
     }
 
     /* Tests a new restroom is created with valid input
