@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Restroom;
+use App\Review;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -42,26 +43,44 @@ class RestroomTest extends TestCase
         $this->assertFalse($validator->passes());
     }
 
+
     /* Similar to testValidBasic but will go through lots
     of possible combinations of properties. */
     public function testValidProperties()
     {
-        $validValues = null;
-
         /* Name */
-        $validValues = array('Domenic', 'Lu', 'Bottle');
+        $validNames = array('Domenic', 'Luuuuuu', 'Bottle');
 
         /* Description */
-        $validValues = array();
+        $validDescriptions = array('This toilet is clean', 'This toilet is disgusting never coming here again', 'Lit Toilet');
 
         /* Lat/Lng */
-        $validValues = array();
+        $validLat = array('37.0029', '38.020492', '35.3093');
+
+        $validLng = array('-156.0029', '-144.020492', '-143.3093');
 
         /* Floor */
-        $validValues = array();
+        $validFloor = array('1','2','10');
 
         /* Added By */
-        $validValues = array();
+        $validAddedBy = array('MJ', 'Domenic', 'Varsha');
+
+        for ($i = 0; $i < 3; $i++) {
+            $validator = Validator::make([
+              'rr_name' => $validNames[$i],
+              'rr_desc' => $validDescriptions[$i],
+              'rr_lat' =>  $validLat[$i],
+              'rr_lng' =>  $validLng[$i],
+              'rr_floor' => $validFloor[$i],
+              'rr_added_by' => $validAddedBy[$i]
+            ], Restroom::getValidationRules());
+
+            if($validator->passes())
+            {
+                $this->assertTrue(true);
+            }
+        }
+
     }
 
     /* Similar to testValidProperties but will test
@@ -69,23 +88,38 @@ class RestroomTest extends TestCase
     expected to fail. */
     public function testInvalidProperties()
     {
-        // TODO
-        $invalidValues = null;
-
         /* Name */
-        $invalidValues = array();
+        $invalidNames = array('Do$$$menic', '$$$Lu', '!!@@@!#!@Bottle');
 
         /* Description */
-        $invalidValues = array();
+        $invalidDescriptions = array('This toilet is clean', 'This toilet is disgusting never coming here again', 'Lit Toilet');
 
         /* Lat/Lng */
-        $invalidValues = array();
+        $invalidLat = array('3e7.0029', '38.0e20492', '3e5.3093');
+
+        $invalidLng = array('-156.0e029', '-144.020e492', '-143.e3093');
 
         /* Floor */
-        $invalidValues = array();
+        $invalidFloor = array('1e','e2','1e0');
 
         /* Added By */
-        $invalidValues = array();
+        $invalidAddedBy = array('eMJ', 'Domeenic', 'Vaersha');
+
+        for ($i = 0; $i < 3; $i++) {
+            $validator = Validator::make([
+              'rr_name' => $invalidNames[$i],
+              'rr_desc' => $invalidDescriptions[$i],
+              'rr_lat' =>  $invalidLat[$i],
+              'rr_lng' =>  $invalidLng[$i],
+              'rr_floor' => $invalidFloor[$i],
+              'rr_added_by' => $invalidAddedBy[$i]
+            ], Restroom::getValidationRules());
+
+            if($validator->fails())
+            {
+                $this->assertTrue(true);
+            }
+        }
     }
 
     /* Tests the expected rating (stars) of a restroom
@@ -94,7 +128,38 @@ class RestroomTest extends TestCase
     have an average star rating of 4. */
     public function testStarsAlgorithm()
     {
-        // TODO
+        $restroom = new Restroom();
+
+        $restroom->name = "RMIT Building 56";
+        $restroom->description = "Its a bit far but its pretty clean";
+        $restroom->lat = "37.0002";
+        $restroom->lng = "-147.033";
+        $restroom->floor = "10";
+        $restroom->addedBy = "Domenic Corso";
+        $restroom->reports = 0;
+
+        $restroom->save();
+
+        $review1 = new Review();
+        $review1->restroom_id = $restroom->id;
+        $review1->author = 'Lu';
+        $review1->body = 'I did not like this restroom at all';
+        $review1->stars = 2;
+        $review1->save();
+
+        $review2 = new Review();
+        $review2->restroom_id = $restroom->id;
+        $review2->author = 'Varsha';
+        $review2->body = 'I enjoyed using this toilet';
+        $review2->stars = 5;
+        $review2->save();
+
+        $expectedRating  = 4;
+        $this->assertEquals($expectedRating, $restroom->stars());
+
+        $restroom->delete();
+        $review1->delete();
+        $review2->delete();
     }
 
     /* Tests a new restroom is created with valid input
