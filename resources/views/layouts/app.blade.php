@@ -18,7 +18,7 @@
                 @endif
             </div>
             <div id="header_middle">
-                <a href="{{ url('/img/TNavLogo.png') }}">
+                <a href="{{ url('/public/img/TNavLogo.png') }}">
                     <img id="logo" alt="TNav" />
                 </a>
             </div>
