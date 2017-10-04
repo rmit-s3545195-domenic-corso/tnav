@@ -18,8 +18,8 @@
                 @endif
             </div>
             <div id="header_middle">
-                <a href="{{ url('/public/img/TNavLogo.png') }}">
-                    <img id="logo" alt="TNav" />
+                <a href="{{ url('/') }}">
+                    <img id="logo" src="{{ url('/img/logo.png') }}" alt="TNav" />
                 </a>
             </div>
             <div id="header_right">
