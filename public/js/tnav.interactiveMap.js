@@ -105,8 +105,6 @@ tnav.interactiveMap.fetchRestroomList = function(latLng) {
         }
     }
 
-    console.log(tagIds);
-
     BL.httpGET("/search-query-geo", {
         lat: latLng.lat,
         lng: latLng.lng,

@@ -31,6 +31,6 @@ class CreateRestroomPhotosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('RestroomPhotos');
+        Schema::dropIfExists('restroom_photos');
     }
 }

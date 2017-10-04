@@ -13,8 +13,6 @@ tnav.interactiveMap.customSearch = {
             if (!place.geometry) {
                 return;
             }
-            
-            console.log(place.address_components);
         },
         btnClicked: function() {
             let userInp = this.e.inpSearch.value;

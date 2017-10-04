@@ -118,10 +118,8 @@ tnav.interactiveMap.ui.generateResultCont = function(result, resultNum) {
     openInMapsButton.className = "btn btn-success";
     openInMapsButton.appendChild(document.createTextNode("Navigate in Maps"));
     openInMapsButton.addEventListener("click", function() {
-        let originStr = tnav.location.recentLoc.lat + ',' + tnav.location.recentLoc.lng;
         let destinationStr = result.lat + ',' + result.lng;
-
-        window.open("https://www.google.com/maps/dir/?api=1&origin=" + originStr + "&destination=" + destinationStr + "&travelmode=walking");
+        window.open("https://www.google.com/maps/dir/?api=1&destination=" + destinationStr + "&travelmode=walking");
     });
 
     let directionsButton = document.createElement("button");
