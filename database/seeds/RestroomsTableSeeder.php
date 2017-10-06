@@ -13,21 +13,17 @@ class RestroomsTableSeeder extends Seeder
     public function run()
     {
         $restroomList = array_map('str_getcsv', file(storage_path('victorian-public-toilets.csv')));
-        /*var_dump($restroomList);*/
+
 
         foreach ($restroomList as $restroom) {
+            if (count($restroom) != 45) { continue; }
             DB::table('restrooms')->insert([
-                'name' => $restroom['2'],
-                'description' => $restroom['7'],
-                'lat' => $restroom['43'],
-                'lng' => $restroom['44'],
+                'name' => (isset($restroom['2']) ? $restroom['2'] : ""),
+                'description' => (isset($restroom['7']) ? $restroom['7'] : "Dikhead"),
+                'lat' => (isset($restroom['43']) ? $restroom['43'] : ""),
+                'lng' => (isset($restroom['44']) ? $restroom['44'] : ""),
                 'reports' => 0
             ]);
         }
-        /*
-           DB::table('restroom_tag')->insert([
-            '0' => 'restroom_id'
-            (Tags?)
-        ]) */
     }
 }
